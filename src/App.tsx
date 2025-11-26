@@ -4,8 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
-import Assessment from "./pages/Assessment";
-import Results from "./pages/Results";
+import AssessmentPage from "./pages/AssessmentPage";
+import ResultsPage from "./pages/ResultsPage";
 import BlueconicView from "./pages/BlueconicView";
 import NotFound from "./pages/NotFound";
 
@@ -19,8 +19,8 @@ const App = () => (
       <BrowserRouter>
         <Navigation />
         <Routes>
-          <Route path="/" element={<Assessment />} />
-          <Route path="/results" element={<Results />} />
+          <Route path="/" element={<AssessmentPage />} />
+          <Route path="/results/:id" element={<ResultsPage />} />
           <Route path="/blueconic-view" element={<BlueconicView />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
