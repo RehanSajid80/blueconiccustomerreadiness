@@ -8,76 +8,82 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartAssessment }: HeroSectionProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
+    <div className="relative overflow-hidden bg-white">
+      {/* Soft gradient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(210_100%_97%)_0%,_transparent_50%),_radial-gradient(ellipse_at_bottom_left,_hsl(195_100%_97%)_0%,_transparent_50%)]" />
+      
+      {/* Floating circles - BlueConic style */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-[10%] w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-secondary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-[5%] w-[400px] h-[400px] bg-gradient-to-tr from-secondary/15 to-primary/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 py-20 md:py-32 relative">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
+      <div className="container mx-auto px-4 py-16 md:py-24 relative">
+        <div className="max-w-5xl mx-auto">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <img src={blueconicLogo} alt="BlueConic" className="h-12 md:h-16" />
+          <div className="flex justify-center mb-12">
+            <img src={blueconicLogo} alt="BlueConic" className="h-10 md:h-12 opacity-90" />
           </div>
 
           {/* Hero Title */}
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight">
-            Discover Hidden Revenue & Personalization Lift with BlueConic
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-navy leading-tight mb-6">
+            Turn first-party data into{" "}
+            <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+              unstoppable growth
+            </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            An interactive, personalized growth assessment based on first-party data, 
-            declared preferences, and identity resolution—used by retail, DTC, CPG, and travel leaders.
+          <p className="text-lg md:text-xl text-navy-light/80 text-center max-w-3xl mx-auto mb-12 leading-relaxed">
+            An interactive assessment that reveals your growth potential through first-party data, 
+            personalization, and identity resolution—trusted by leading B2C brands.
           </p>
 
           {/* 3-Step Overview */}
-          <div className="grid md:grid-cols-3 gap-6 mt-12 mb-12">
-            <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-primary/20 hover:shadow-lg transition-all hover:scale-105">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <Target className="w-6 h-6 text-primary-foreground" />
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(74,159,245,0.08)] border border-primary/10 hover:shadow-[0_8px_24px_rgba(74,159,245,0.12)] transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
+                <Target className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Assess Maturity</h3>
-              <p className="text-sm text-muted-foreground">
-                Quick 4-dimension maturity evaluation
+              <h3 className="font-semibold text-lg mb-2 text-navy">Assess Maturity</h3>
+              <p className="text-sm text-navy-light/70 leading-relaxed">
+                Quick 4-dimension evaluation of your data & personalization capabilities
               </p>
             </div>
 
-            <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-secondary/20 hover:shadow-lg transition-all hover:scale-105">
-              <div className="w-12 h-12 bg-gradient-to-br from-secondary to-secondary/60 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <Database className="w-6 h-6 text-secondary-foreground" />
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(74,159,245,0.08)] border border-primary/10 hover:shadow-[0_8px_24px_rgba(74,159,245,0.12)] transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(0,191,243,0.25)]">
+                <Database className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Data Readiness</h3>
-              <p className="text-sm text-muted-foreground">
-                Benchmark your data capabilities
+              <h3 className="font-semibold text-lg mb-2 text-navy">Benchmark Performance</h3>
+              <p className="text-sm text-navy-light/70 leading-relaxed">
+                Compare your metrics against industry leaders in your sector
               </p>
             </div>
 
-            <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 border border-accent/20 hover:shadow-lg transition-all hover:scale-105">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent/60 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <Zap className="w-6 h-6 text-accent-foreground" />
+            <div className="bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(74,159,245,0.08)] border border-primary/10 hover:shadow-[0_8px_24px_rgba(74,159,245,0.12)] transition-all duration-300 hover:-translate-y-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary via-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
+                <Zap className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Growth Plays</h3>
-              <p className="text-sm text-muted-foreground">
-                Personalized actionable recommendations
+              <h3 className="font-semibold text-lg mb-2 text-navy">Get Your Playbook</h3>
+              <p className="text-sm text-navy-light/70 leading-relaxed">
+                Receive personalized growth strategies tailored to your business
               </p>
             </div>
           </div>
 
           {/* CTA */}
-          <div>
+          <div className="text-center">
             <Button 
               size="lg" 
               onClick={onStartAssessment}
-              className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-lg px-8 py-6 h-auto group"
+              className="bg-gradient-to-r from-primary to-secondary hover:shadow-[0_8px_24px_rgba(74,159,245,0.3)] text-white text-base md:text-lg px-10 py-6 h-auto rounded-full font-semibold group transition-all duration-300 hover:scale-105"
             >
               Start Your Assessment
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <p className="text-sm text-muted-foreground mt-4">
-              Takes only 2-3 minutes • No credit card required
+            <p className="text-sm text-navy-light/60 mt-5 font-medium">
+              Takes 2-3 minutes • Instant results • No commitment required
             </p>
           </div>
         </div>
