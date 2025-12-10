@@ -24,8 +24,8 @@ const sections = [
     icon: Database,
     color: "from-blue-500 to-blue-600",
     questions: [
-      {
-        question: "Be honest — how does your customer data actually behave day-to-day?",
+    {
+        question: "Be honest… how does your customer data actually behave day-to-day?",
         options: [
           { value: 1, label: "It's living its best siloed life. Totally disconnected." },
           { value: 2, label: "We've herded some of it together, but it still wanders." },
@@ -37,17 +37,17 @@ const sections = [
       {
         question: "How easy is it for your teams to spin up the audiences they actually want?",
         options: [
-          { value: 1, label: "Every request goes through IT and comes back in dog years." },
+          { value: 1, label: "Every request goes through IT. Enough said." },
           { value: 2, label: "Some self-service, but it's… clunky." },
           { value: 3, label: "Marketing builds most audiences on their own (bless)." },
           { value: 4, label: "Audiences update automatically based on behavior." },
-          { value: 5, label: "Audiences update themselves — genuinely adaptive and magical." },
+          { value: 5, label: "Audiences update themselves. It's genuinely adaptive and magical." },
         ],
       },
       {
         question: "How solid is your ability to stitch together a single customer view?",
         options: [
-          { value: 1, label: "Duplicates, gaps, mystery emails — it's chaos." },
+          { value: 1, label: "Duplicates, gaps, mystery emails. It's chaos." },
           { value: 2, label: "Some matching, but inconsistent." },
           { value: 3, label: "Mostly unified across major channels." },
           { value: 4, label: "Strong identity resolution with automation." },
