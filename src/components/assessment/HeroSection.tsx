@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Database, Zap, Target } from "lucide-react";
+import { ArrowRight, Target, BarChart3, FileText } from "lucide-react";
 import blueconicLogo from "@/assets/blueconic-logo.png";
 
 interface HeroSectionProps {
@@ -27,16 +27,19 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
 
           {/* Hero Title */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-navy leading-tight mb-6">
-            Turn first-party data into{" "}
+            Intelligent Growth{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-              unstoppable growth
+              Maturity Calculator
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-navy-light/80 text-center max-w-3xl mx-auto mb-12 leading-relaxed">
-            An interactive assessment that reveals your growth potential through first-party data, 
-            personalization, and identity resolution—trusted by leading B2C brands.
+          <p className="text-lg md:text-xl text-navy-light/80 text-center max-w-3xl mx-auto mb-4 leading-relaxed">
+            A five-minute reality check for your data, AI, and everything else powering your customer growth strategy.
+          </p>
+          
+          <p className="text-base text-navy-light/70 text-center max-w-3xl mx-auto mb-12 leading-relaxed">
+            Get a quick, no-nonsense look at how your data, activation, decisioning, and governance work today, and where your biggest growth opportunities actually are.
           </p>
 
           {/* 3-Step Overview */}
@@ -45,29 +48,29 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
               <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
                 <Target className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Assess Maturity</h3>
+              <h3 className="font-semibold text-lg mb-2 text-navy">Assess Your Readiness</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
-                Quick 4-dimension evaluation of your data & personalization capabilities
+                A fast, four-dimensional pulse check on how intelligently your data, activation, decisioning, and governance are working today.
               </p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(74,159,245,0.08)] border border-primary/10 hover:shadow-[0_8px_24px_rgba(74,159,245,0.12)] transition-all duration-300 hover:-translate-y-1">
               <div className="w-14 h-14 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(0,191,243,0.25)]">
-                <Database className="w-7 h-7 text-white" />
+                <BarChart3 className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Benchmark Performance</h3>
+              <h3 className="font-semibold text-lg mb-2 text-navy">Benchmark Your Potential</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
-                Compare your metrics against industry leaders in your sector
+                See how your growth engine stacks up against what high-performing brands are doing right now.
               </p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(74,159,245,0.08)] border border-primary/10 hover:shadow-[0_8px_24px_rgba(74,159,245,0.12)] transition-all duration-300 hover:-translate-y-1">
               <div className="w-14 h-14 bg-gradient-to-br from-primary via-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
-                <Zap className="w-7 h-7 text-white" />
+                <FileText className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Get Your Playbook</h3>
+              <h3 className="font-semibold text-lg mb-2 text-navy">Get Your Growth Playbook</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
-                Receive personalized growth strategies tailored to your business
+                Walk away with personalized, high-impact plays designed to boost your customer engagement and revenue momentum immediately.
               </p>
             </div>
           </div>
@@ -82,8 +85,8 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
               Start Your Assessment
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <p className="text-sm text-navy-light/60 mt-5 font-medium">
-              Takes 2-3 minutes • Instant results • No commitment required
+            <p className="text-sm text-navy-light/50 mt-6 italic">
+              Think of it as a vibe check for your martech maturity (but, you know… actually useful).
             </p>
           </div>
         </div>
