@@ -16,15 +16,15 @@ interface Step1IndustryProps {
 
 const industryIcons: Record<string, string> = {
   retail: "🏬",
-  dtc: "📦",
-  cpg: "🛒",
+  dtc: "🛒",
+  cpg: "🏭",
   travel_hospitality: "✈️",
   media_subscription: "📺",
 };
 
 const personaIcons: Record<string, string> = {
   digital_marketing: "📊",
-  ecommerce: "🛍️",
+  ecommerce: "👔",
   cx_loyalty: "💝",
   growth: "📈",
   data_it: "💻",

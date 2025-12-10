@@ -73,7 +73,7 @@ const getPillarInsight = (pillar: string, score: number): string => {
 const getPersonaLabel = (type: string): string => {
   const labels: Record<string, string> = {
     digital_marketing: "Digital Marketing",
-    ecommerce: "eCommerce",
+    ecommerce: "Leadership",
     cx_loyalty: "Customer Experience",
     growth: "Growth",
     data_it: "Data/IT",
@@ -207,27 +207,27 @@ export default function ResultsPage() {
     {
       title: "Identity Resolution",
       description: "Convert anonymous traffic into known customers through progressive profiling and cross-device identity stitching.",
-      impact: "Brands at your maturity level typically unlock 20–35% revenue lift through identity resolution and cart rescue optimization.",
+      impact: "Brands at your maturity level typically unlock 20 to 35% revenue lift through identity resolution and cart rescue optimization.",
     },
     {
-      title: "Zero-/First-Party Data Capture",
+      title: "Zero/First Party Data Capture",
       description: "Build richer customer profiles through declared preferences, reducing dependency on third-party data and lowering CAC.",
-      impact: "First-party audience building reduces acquisition costs by 15–25% compared to third-party data strategies.",
+      impact: "First-party audience building reduces acquisition costs by 15 to 25% compared to third-party data strategies.",
     },
     {
       title: "Dynamic Media Suppression",
       description: "Stop wasting ad spend on converted customers and high-intent visitors already in your funnel.",
-      impact: "Dynamic suppression alone saves 7.5–18% of media spend for similar organizations.",
+      impact: "Dynamic suppression alone saves 7.5 to 18% of media spend for similar organizations.",
     },
     {
       title: "Real-Time Cross-Channel Activation",
       description: "Orchestrate consistent experiences across email, web, ads, and mobile based on live customer signals.",
-      impact: "Real-time activation typically drives 40–60% improvement in campaign performance metrics.",
+      impact: "Real-time activation typically drives 40 to 60% improvement in campaign performance metrics.",
     },
     {
-      title: "Unified Governance & PII Automation",
+      title: "Unified Governance and PII Automation",
       description: "Automate consent management and privacy compliance across all customer touchpoints.",
-      impact: "Automated governance reduces compliance risk while enabling faster speed-to-market.",
+      impact: "Automated governance reduces compliance risk while enabling faster speed to market.",
     },
   ];
 
@@ -469,14 +469,14 @@ export default function ResultsPage() {
                 <div className="text-sm text-muted-foreground">Conversion Lift Potential</div>
               </div>
               <div className="p-4 bg-white/70 rounded-xl text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-1">15-25%</div>
+                <div className="text-3xl font-bold text-purple-600 mb-1">15 to 25%</div>
                 <div className="text-sm text-muted-foreground">CAC Reduction</div>
               </div>
             </div>
             
             <p className="text-sm text-muted-foreground leading-relaxed">
               With your current maturity profile, organizations typically unlock{" "}
-              <strong className="text-foreground">25–40% revenue impact</strong> by progressing to the next 
+              <strong className="text-foreground">25 to 40% revenue impact</strong> by progressing to the next 
               maturity stage. High-performing brands in your category have achieved up to{" "}
               <strong className="text-foreground">80% conversion lift</strong> through unified customer data 
               and intelligent activation strategies.
