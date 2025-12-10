@@ -46,7 +46,6 @@ export function MaturityQuestion({
                 {selectedValue === option.value && <Check className="w-3.5 h-3.5" />}
               </div>
               <div className="flex-1">
-                <span className="text-sm font-medium text-navy-light/60 mr-2">({option.value})</span>
                 <span className="text-foreground">{option.label}</span>
               </div>
             </div>
