@@ -1,14 +1,17 @@
 import { cn } from "@/lib/utils";
 import { Industry, Persona } from "@/types/assessment";
-import { Check, Building2, User } from "lucide-react";
+import { Check, Building2, User, Building } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface Step1IndustryProps {
   industries: Industry[];
   personas: Persona[];
   selectedIndustry: string | null;
   selectedPersona: string | null;
+  companyName: string;
   onIndustryChange: (value: string) => void;
   onPersonaChange: (value: string) => void;
+  onCompanyNameChange: (value: string) => void;
 }
 
 const industryIcons: Record<string, string> = {
@@ -32,18 +35,32 @@ export function Step1Industry({
   personas,
   selectedIndustry,
   selectedPersona,
+  companyName,
   onIndustryChange,
   onPersonaChange,
+  onCompanyNameChange,
 }: Step1IndustryProps) {
-  const selectedIndustryData = industries.find((i) => i.id === selectedIndustry);
-
   return (
     <div className="space-y-8">
       <div className="text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-navy mb-2">Let's Get Started</h2>
         <p className="text-muted-foreground">
-          Tell us about your industry and role to personalize your assessment
+          Tell us about your company to personalize your assessment
         </p>
+      </div>
+
+      {/* Company Name Input */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Building className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold text-navy">What's your company name?</h3>
+        </div>
+        <Input
+          placeholder="Enter your company name"
+          value={companyName}
+          onChange={(e) => onCompanyNameChange(e.target.value)}
+          className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
+        />
       </div>
 
       {/* Industry Selection */}
