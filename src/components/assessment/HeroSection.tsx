@@ -34,12 +34,8 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-navy-light/80 text-center max-w-3xl mx-auto mb-4 leading-relaxed">
-            A five-minute reality check for your data, AI, and everything else powering your customer growth strategy.
-          </p>
-          
-          <p className="text-base text-navy-light/70 text-center max-w-3xl mx-auto mb-12 leading-relaxed">
-            Get a quick, no-nonsense look at how your data, activation, decisioning, and governance work today, and where your biggest growth opportunities actually are.
+          <p className="text-lg md:text-xl text-navy-light/80 text-center max-w-3xl mx-auto mb-12 leading-relaxed">
+            A five-minute reality check for your data, AI, and everything else powering your customer growth strategy. Get a quick, no-nonsense look at how your data, activation, decisioning, and governance work today, and where your biggest growth opportunities actually are.
           </p>
 
           {/* 3-Step Overview */}

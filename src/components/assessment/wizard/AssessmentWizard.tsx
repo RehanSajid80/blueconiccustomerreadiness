@@ -32,6 +32,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     industry_id: null,
     persona_id: null,
     company_name: "",
+    email: "",
     monthly_web_traffic: null,
     known_profile_count: null,
     consent_rate: null,
@@ -80,7 +81,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
 
   const canProceed = () => {
     if (step === 1) {
-      return assessmentData.industry_id && assessmentData.persona_id && assessmentData.company_name?.trim();
+      return assessmentData.industry_id && assessmentData.persona_id && assessmentData.company_name?.trim() && assessmentData.email?.trim();
     }
     if (step === 2) {
       return allMaturityQuestionsAnswered();
@@ -119,6 +120,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
       industry_id: assessmentData.industry_id,
       persona_id: assessmentData.persona_id,
       company_name: assessmentData.company_name,
+      email: assessmentData.email,
       monthly_web_traffic: assessmentData.monthly_web_traffic,
       known_profile_count: assessmentData.known_profile_count,
       consent_rate: assessmentData.consent_rate,
@@ -209,6 +211,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               selectedIndustry={assessmentData.industry_id}
               selectedPersona={assessmentData.persona_id}
               companyName={assessmentData.company_name || ""}
+              email={assessmentData.email || ""}
               onIndustryChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, industry_id: value }))
               }
@@ -217,6 +220,9 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               }
               onCompanyNameChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, company_name: value }))
+              }
+              onEmailChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, email: value }))
               }
             />
           )}
