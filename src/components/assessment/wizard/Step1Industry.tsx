@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Industry, Persona } from "@/types/assessment";
-import { Check, Building2, User, Building } from "lucide-react";
+import { Check, Building2, User, Building, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface Step1IndustryProps {
@@ -9,9 +9,11 @@ interface Step1IndustryProps {
   selectedIndustry: string | null;
   selectedPersona: string | null;
   companyName: string;
+  email: string;
   onIndustryChange: (value: string) => void;
   onPersonaChange: (value: string) => void;
   onCompanyNameChange: (value: string) => void;
+  onEmailChange: (value: string) => void;
 }
 
 const industryIcons: Record<string, string> = {
@@ -36,9 +38,11 @@ export function Step1Industry({
   selectedIndustry,
   selectedPersona,
   companyName,
+  email,
   onIndustryChange,
   onPersonaChange,
   onCompanyNameChange,
+  onEmailChange,
 }: Step1IndustryProps) {
   return (
     <div className="space-y-8">
@@ -59,6 +63,21 @@ export function Step1Industry({
           placeholder="Enter your company name"
           value={companyName}
           onChange={(e) => onCompanyNameChange(e.target.value)}
+          className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
+        />
+      </div>
+
+      {/* Email Input */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Mail className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold text-navy">What's your email address?</h3>
+        </div>
+        <Input
+          type="email"
+          placeholder="Enter your email address"
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
           className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
         />
       </div>
