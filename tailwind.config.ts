@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Lexend', 'system-ui', 'sans-serif'],
       },
+      chartPrimary: "hsl(var(--chart-primary))",
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
