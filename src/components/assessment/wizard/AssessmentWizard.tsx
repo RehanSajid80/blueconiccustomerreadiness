@@ -8,7 +8,7 @@ import { Step1Industry } from "./Step1Industry";
 import { Step2Maturity, maturitySections } from "./Step2Maturity";
 import { Step3Business } from "./Step3Business";
 import { useNavigate } from "react-router-dom";
-import blueconicLogo from "@/assets/blueconic-logo.png";
+import bcLogoWhite from "@/assets/bc-logo-partial-white.png";
 
 interface AssessmentWizardProps {
   onComplete: (assessmentId: string) => void;
@@ -159,11 +159,11 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30">
       {/* Header */}
-      <div className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+      <div className="bg-[#0a1628] sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <img src={blueconicLogo} alt="BlueConic" className="h-8" />
-            <div className="text-sm text-muted-foreground">
+            <img src={bcLogoWhite} alt="BlueConic" className="h-7" />
+            <div className="text-sm text-white/70">
               Step {step} of 3: {stepLabels[step - 1]}
             </div>
           </div>
