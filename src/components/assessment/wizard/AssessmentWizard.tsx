@@ -27,6 +27,22 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loading, setLoading] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+
+  // Demo mode toggle: Ctrl+Shift+D
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "D") {
+        setDemoMode((prev) => {
+          const next = !prev;
+          console.log(`Demo mode ${next ? "enabled" : "disabled"}`);
+          return next;
+        });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const [assessmentData, setAssessmentData] = useState<AssessmentData>({
     industry_id: null,
@@ -80,6 +96,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   };
 
   const canProceed = () => {
+    if (demoMode) return true;
     if (step === 1) {
       return assessmentData.industry_id && assessmentData.persona_id && assessmentData.company_name?.trim() && assessmentData.email?.trim();
     }
@@ -274,7 +291,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
 
               <Button
                 onClick={() => setStep(3)}
-                disabled={!allMaturityQuestionsAnswered()}
+                disabled={!demoMode && !allMaturityQuestionsAnswered()}
                 className="gap-2 bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all"
               >
                 Continue to Business Metrics
@@ -288,6 +305,13 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
         <p className="text-center text-sm text-muted-foreground mt-6 max-w-lg mx-auto">
           Your responses generate a personalized readiness report with actionable growth plays.
         </p>
+
+        {/* Demo mode indicator */}
+        {demoMode && (
+          <div className="fixed bottom-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+            Demo Mode ON (Ctrl+Shift+D to toggle)
+          </div>
+        )}
       </div>
     </div>
   );
