@@ -21,7 +21,7 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
         <div className="max-w-5xl mx-auto">
 
           {/* Hero Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-navy leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-center text-navy leading-tight mb-6">
             Intelligent Growth{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
               Maturity Calculator
@@ -39,7 +39,7 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
               <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
                 <Target className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Assess Your Readiness</h3>
+              <h3 className="font-heading font-semibold text-lg mb-2 text-navy">Assess Your Readiness</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
                 A fast, four-dimensional pulse check on how intelligently your data, activation, decisioning, and governance are working today.
               </p>
@@ -49,7 +49,7 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
               <div className="w-14 h-14 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(0,191,243,0.25)]">
                 <BarChart3 className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Benchmark Your Potential</h3>
+              <h3 className="font-heading font-semibold text-lg mb-2 text-navy">Benchmark Your Potential</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
                 See how your growth engine stacks up against what high-performing brands are doing right now.
               </p>
@@ -59,7 +59,7 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
               <div className="w-14 h-14 bg-gradient-to-br from-primary via-secondary to-primary rounded-full flex items-center justify-center mb-4 shadow-[0_4px_12px_rgba(74,159,245,0.25)]">
                 <FileText className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-lg mb-2 text-navy">Get Your Growth Playbook</h3>
+              <h3 className="font-heading font-semibold text-lg mb-2 text-navy">Get Your Growth Playbook</h3>
               <p className="text-sm text-navy-light/70 leading-relaxed">
                 Walk away with personalized, high-impact plays designed to boost your customer engagement and revenue momentum immediately.
               </p>

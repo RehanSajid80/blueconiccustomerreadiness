@@ -47,7 +47,7 @@ export function Step1Industry({
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-navy mb-2">Let's Get Started</h2>
+        <h2 className="text-2xl md:text-3xl font-heading font-bold text-navy mb-2">Let's Get Started</h2>
         <p className="text-muted-foreground">
           Tell us about your company to personalize your assessment
         </p>

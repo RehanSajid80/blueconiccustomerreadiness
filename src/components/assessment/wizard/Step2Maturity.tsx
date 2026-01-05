@@ -237,7 +237,7 @@ export function Step2Maturity({ scores, onScoresChange }: Step2MaturityProps) {
           <Icon className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-navy">{section.title}</h2>
+          <h2 className="text-xl font-heading font-bold text-navy">{section.title}</h2>
           <p className="text-sm text-muted-foreground">{section.subtitle}</p>
         </div>
       </div>
