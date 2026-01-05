@@ -53,7 +53,7 @@ export default function Results() {
               </Badge>
             </div>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Your Readiness Snapshot</h2>
+              <h2 className="text-xl font-heading font-semibold">Your Readiness Snapshot</h2>
               <p className="text-muted-foreground">
                 You're making strong progress in activating customer data across channels and measuring impact. Your biggest opportunity lies in unifying data sources and leveraging AI to unlock predictive insights. With focused improvements in data quality and intelligence, you can accelerate customer growth significantly.
               </p>
@@ -67,7 +67,7 @@ export default function Results() {
           <div className="lg:col-span-2 space-y-8">
             {/* Pillar Scores */}
             <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Your Readiness by Pillar</h2>
+              <h2 className="text-2xl font-heading font-bold mb-6">Your Readiness by Pillar</h2>
               <div className="space-y-6">
                 {pillars.map((pillar) => (
                   <div key={pillar.name}>
@@ -94,7 +94,7 @@ export default function Results() {
               <Card className="p-6 border-secondary/30">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="h-5 w-5 text-secondary" />
-                  <h3 className="font-semibold">Where You're Ahead</h3>
+                  <h3 className="font-heading font-semibold">Where You're Ahead</h3>
                 </div>
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-2">
@@ -115,7 +115,7 @@ export default function Results() {
               <Card className="p-6 border-accent/30">
                 <div className="flex items-center gap-2 mb-4">
                   <Target className="h-5 w-5 text-accent" />
-                  <h3 className="font-semibold">Where to Focus</h3>
+                  <h3 className="font-heading font-semibold">Where to Focus</h3>
                 </div>
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-2">
@@ -140,7 +140,7 @@ export default function Results() {
             <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5">
               <div className="flex items-center gap-2 mb-4">
                 <Lightbulb className="h-5 w-5 text-primary" />
-                <h3 className="font-semibold">Priority Recommendations</h3>
+                <h3 className="font-heading font-semibold">Priority Recommendations</h3>
               </div>
               <div className="space-y-4">
                 {recommendations.map((rec, index) => (
@@ -168,7 +168,7 @@ export default function Results() {
 
         {/* Bottom CTAs */}
         <Card className="p-8 mt-12 text-center bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
-          <h2 className="text-2xl font-bold mb-4">Ready to Accelerate Your Customer Growth?</h2>
+          <h2 className="text-2xl font-heading font-bold mb-4">Ready to Accelerate Your Customer Growth?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
             Work with a BlueConic expert to create a customized roadmap based on your readiness assessment.
           </p>
