@@ -89,7 +89,7 @@ export function Step1Industry({
           <h3 className="font-semibold text-navy">What industry are you in?</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {industries.map((industry) => (
+          {industries.filter((industry) => industry.type !== "media_subscription").map((industry) => (
             <button
               key={industry.id}
               onClick={() => onIndustryChange(industry.id)}
