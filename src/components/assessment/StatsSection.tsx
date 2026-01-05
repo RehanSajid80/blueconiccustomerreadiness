@@ -26,7 +26,7 @@ export function StatsSection() {
   return (
     <div className="py-20 bg-gradient-to-b from-white to-muted/30">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-navy">
+        <h2 className="text-3xl md:text-4xl font-heading font-bold text-center mb-4 text-navy">
           Why First-Party Data Matters
         </h2>
         <p className="text-navy-light/70 text-center mb-16 max-w-2xl mx-auto text-lg">
