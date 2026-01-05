@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Lexend', 'system-ui', 'sans-serif'],
+        heading: ['"ABC Ginto"', 'system-ui', 'sans-serif'],
       },
       chartPrimary: "hsl(var(--chart-primary))",
       colors: {
