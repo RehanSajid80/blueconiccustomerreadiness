@@ -29,10 +29,11 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const [loading, setLoading] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
 
-  // Demo mode toggle: Ctrl+Shift+D
+  // Demo mode toggle: Ctrl+Alt+D
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === "D") {
+      if (e.ctrlKey && e.altKey && e.key === "d") {
+        e.preventDefault();
         setDemoMode((prev) => {
           const next = !prev;
           console.log(`Demo mode ${next ? "enabled" : "disabled"}`);
@@ -309,7 +310,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
         {/* Demo mode indicator */}
         {demoMode && (
           <div className="fixed bottom-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-            Demo Mode ON (Ctrl+Shift+D to toggle)
+            Demo Mode ON (Ctrl+Alt+D to toggle)
           </div>
         )}
       </div>
