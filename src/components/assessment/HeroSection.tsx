@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Target, BarChart3, FileText } from "lucide-react";
-import blueconicLogo from "@/assets/blueconic-logo.png";
+import bcLogoWhite from "@/assets/bc-logo-partial-white.png";
 
 interface HeroSectionProps {
   onStartAssessment: () => void;
@@ -8,22 +8,29 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartAssessment }: HeroSectionProps) {
   return (
-    <div className="relative overflow-hidden bg-white">
-      {/* Soft gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(210_100%_97%)_0%,_transparent_50%),_radial-gradient(ellipse_at_bottom_left,_hsl(195_100%_97%)_0%,_transparent_50%)]" />
-      
-      {/* Floating circles - BlueConic style */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-[10%] w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-secondary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-[5%] w-[400px] h-[400px] bg-gradient-to-tr from-secondary/15 to-primary/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-4 py-16 md:py-24 relative">
-        <div className="max-w-5xl mx-auto">
-          {/* Logo */}
-          <div className="flex justify-center mb-12">
-            <img src={blueconicLogo} alt="BlueConic" className="h-10 md:h-12 opacity-90" />
+    <div className="relative overflow-hidden">
+      {/* Dark header with logo */}
+      <div className="bg-[#0a1628] py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center">
+            <img src={bcLogoWhite} alt="BlueConic" className="h-8 md:h-10" />
           </div>
+        </div>
+      </div>
+      
+      {/* Main content area with light background */}
+      <div className="relative bg-white">
+        {/* Soft gradient background */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(218_100%_97%)_0%,_transparent_50%),_radial-gradient(ellipse_at_bottom_left,_hsl(218_100%_97%)_0%,_transparent_50%)]" />
+        
+        {/* Floating circles - BlueConic style */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 right-[10%] w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-secondary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-[5%] w-[400px] h-[400px] bg-gradient-to-tr from-secondary/15 to-primary/10 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container mx-auto px-4 py-16 md:py-20 relative">
+          <div className="max-w-5xl mx-auto">
 
           {/* Hero Title */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-navy leading-tight mb-6">
@@ -84,6 +91,7 @@ export function HeroSection({ onStartAssessment }: HeroSectionProps) {
             <p className="text-sm text-navy-light/50 mt-6 italic">
               Think of it as a vibe check for your martech maturity (but, you know… actually useful).
             </p>
+          </div>
           </div>
         </div>
       </div>
