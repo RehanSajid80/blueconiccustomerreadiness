@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Industry, Persona } from "@/types/assessment";
-import { Check, Building2, User, Building, Mail } from "lucide-react";
+import { Check, Building2, User, Building, Mail, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface Step1IndustryProps {
@@ -9,10 +9,12 @@ interface Step1IndustryProps {
   selectedIndustry: string | null;
   selectedPersona: string | null;
   companyName: string;
+  companyUrl: string;
   email: string;
   onIndustryChange: (value: string) => void;
   onPersonaChange: (value: string) => void;
   onCompanyNameChange: (value: string) => void;
+  onCompanyUrlChange: (value: string) => void;
   onEmailChange: (value: string) => void;
 }
 
@@ -38,10 +40,12 @@ export function Step1Industry({
   selectedIndustry,
   selectedPersona,
   companyName,
+  companyUrl,
   email,
   onIndustryChange,
   onPersonaChange,
   onCompanyNameChange,
+  onCompanyUrlChange,
   onEmailChange,
 }: Step1IndustryProps) {
   return (
@@ -65,6 +69,24 @@ export function Step1Industry({
           onChange={(e) => onCompanyNameChange(e.target.value)}
           className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
         />
+      </div>
+
+      {/* Company Website URL Input */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Globe className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold text-navy">What's your company website?</h3>
+        </div>
+        <Input
+          type="url"
+          placeholder="https://www.yourcompany.com"
+          value={companyUrl}
+          onChange={(e) => onCompanyUrlChange(e.target.value)}
+          className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
+        />
+        <p className="text-xs text-muted-foreground">
+          We'll analyze your website to provide more tailored recommendations
+        </p>
       </div>
 
       {/* Email Input */}

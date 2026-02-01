@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Industry, Persona, AssessmentData } from "@/types/assessment";
+import { Industry, Persona, AssessmentData, ChallengeType, GoalType } from "@/types/assessment";
 import { Step1Industry } from "./Step1Industry";
 import { Step2Maturity, maturitySections } from "./Step2Maturity";
+import { Step3Challenges } from "./Step3Challenges";
 import { Step3Business } from "./Step3Business";
 import { useNavigate } from "react-router-dom";
 
@@ -49,7 +50,10 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     industry_id: null,
     persona_id: null,
     company_name: "",
+    company_url: "",
     email: "",
+    challenges: [],
+    goals: [],
     monthly_web_traffic: null,
     known_profile_count: null,
     consent_rate: null,
@@ -86,6 +90,14 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     setAssessmentData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleChallengesChange = (challenges: ChallengeType[]) => {
+    setAssessmentData((prev) => ({ ...prev, challenges }));
+  };
+
+  const handleGoalsChange = (goals: GoalType[]) => {
+    setAssessmentData((prev) => ({ ...prev, goals }));
+  };
+
   const calculateDimensionScore = (answers: number[]): number => {
     const validAnswers = answers.filter((a) => a > 0);
     if (validAnswers.length === 0) return 3;
@@ -104,11 +116,15 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     if (step === 2) {
       return allMaturityQuestionsAnswered();
     }
+    if (step === 3) {
+      // Require at least 1 challenge and 1 goal
+      return (assessmentData.challenges?.length || 0) >= 1 && (assessmentData.goals?.length || 0) >= 1;
+    }
     return true;
   };
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       handleSubmit();
@@ -138,7 +154,10 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
       industry_id: assessmentData.industry_id,
       persona_id: assessmentData.persona_id,
       company_name: assessmentData.company_name,
+      company_url: assessmentData.company_url || null,
       email: assessmentData.email,
+      challenges: assessmentData.challenges || [],
+      goals: assessmentData.goals || [],
       monthly_web_traffic: assessmentData.monthly_web_traffic,
       known_profile_count: assessmentData.known_profile_count,
       consent_rate: assessmentData.consent_rate,
@@ -172,7 +191,8 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     }
   };
 
-  const stepLabels = ["Industry & Role", "Maturity Assessment", "Business Metrics"];
+  const stepLabels = ["Company Info", "Maturity Assessment", "Challenges & Goals", "Business Metrics"];
+  const totalSteps = 4;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30">
@@ -180,12 +200,12 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
         {/* Step indicator badge */}
         <div className="max-w-3xl mx-auto mb-6">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-            Step {step} of 3: {stepLabels[step - 1]}
+            Step {step} of {totalSteps}: {stepLabels[step - 1]}
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="max-w-3xl mx-auto mb-8">
+        <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-between">
             {stepLabels.map((label, idx) => (
               <div key={label} className="flex items-center">
@@ -199,13 +219,13 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                   >
                     {idx + 1}
                   </div>
-                  <span className="text-xs mt-2 text-center hidden md:block max-w-[100px]">
+                  <span className="text-xs mt-2 text-center hidden md:block max-w-[80px]">
                     {label}
                   </span>
                 </div>
                 {idx < stepLabels.length - 1 && (
                   <div
-                    className={`w-16 md:w-24 h-1 mx-2 rounded-full transition-all ${
+                    className={`w-12 md:w-16 h-1 mx-2 rounded-full transition-all ${
                       idx + 1 < step ? "bg-primary" : "bg-muted"
                     }`}
                   />
@@ -224,6 +244,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               selectedIndustry={assessmentData.industry_id}
               selectedPersona={assessmentData.persona_id}
               companyName={assessmentData.company_name || ""}
+              companyUrl={assessmentData.company_url || ""}
               email={assessmentData.email || ""}
               onIndustryChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, industry_id: value }))
@@ -233,6 +254,9 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               }
               onCompanyNameChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, company_name: value }))
+              }
+              onCompanyUrlChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, company_url: value }))
               }
               onEmailChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, email: value }))
@@ -248,13 +272,22 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
           )}
 
           {step === 3 && (
+            <Step3Challenges
+              selectedChallenges={assessmentData.challenges || []}
+              selectedGoals={assessmentData.goals || []}
+              onChallengesChange={handleChallengesChange}
+              onGoalsChange={handleGoalsChange}
+            />
+          )}
+
+          {step === 4 && (
             <Step3Business
               data={assessmentData}
               onChange={handleBusinessDataChange}
             />
           )}
 
-          {/* Navigation - Only show on steps 1 and 3 */}
+          {/* Navigation - Show on all steps except step 2 (which has its own nav) */}
           {step !== 2 && (
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
               <Button
@@ -272,13 +305,22 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                 disabled={!canProceed() || loading}
                 className="gap-2 bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all"
               >
-                {loading ? "Saving..." : step === 3 ? "See My Results" : "Continue"}
-                <ArrowRight className="w-4 h-4" />
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : step === totalSteps ? (
+                  "See My Results"
+                ) : (
+                  "Continue"
+                )}
+                {!loading && <ArrowRight className="w-4 h-4" />}
               </Button>
             </div>
           )}
 
-          {/* Step 2 has its own navigation, but we need global nav too */}
+          {/* Step 2 has its own navigation */}
           {step === 2 && (
             <div className="flex items-center justify-between mt-4 pt-4 border-t">
               <Button
@@ -287,7 +329,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                 className="gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Industry
+                Back
               </Button>
 
               <Button
@@ -295,7 +337,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                 disabled={!demoMode && !allMaturityQuestionsAnswered()}
                 className="gap-2 bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all"
               >
-                Continue to Business Metrics
+                Continue to Challenges
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
@@ -304,7 +346,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
 
         {/* Footer note */}
         <p className="text-center text-sm text-muted-foreground mt-6 max-w-lg mx-auto">
-          Your responses generate a personalized readiness report with actionable growth plays.
+          Your responses generate a personalized readiness report with actionable growth plays tailored to your specific challenges.
         </p>
 
         {/* Demo mode indicator */}

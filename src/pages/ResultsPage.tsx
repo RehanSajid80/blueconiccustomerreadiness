@@ -503,31 +503,111 @@ export default function ResultsPage() {
           </Card>
         </section>
 
-        {/* Section 8: Growth Plays from Database */}
+        {/* Section 8: Recommended Growth Plays - MAIN OUTPUT */}
         {scoredPlays.length > 0 && (
           <section className="mb-12">
-            <Card className="p-6 md:p-8 bg-gradient-to-br from-primary/5 to-accent/5">
-              <div className="flex items-center gap-2 mb-6">
-                <Target className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold text-navy">Personalized Growth Plays</h2>
+            <Card className="p-6 md:p-8 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-2 border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                <h2 className="text-2xl font-bold text-navy">Your Recommended Growth Plays</h2>
               </div>
-              
+              <p className="text-muted-foreground mb-6">
+                Based on your challenges, goals, and maturity profile, these BlueConic Growth Plays are recommended for your organization.
+              </p>
+
               <div className="space-y-4">
-                {scoredPlays.slice(0, 5).map((play) => (
-                  <Card key={play.id} className="p-4 bg-white/80 border-primary/10">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-navy flex-1">{play.name}</h3>
-                      <Badge className="ml-2 bg-primary/10 text-primary">
-                        {play.confidence_score}% match
-                      </Badge>
+                {scoredPlays.slice(0, 5).map((play, index) => (
+                  <Card
+                    key={play.id}
+                    className={`p-5 bg-white border-l-4 hover:shadow-md transition-all ${
+                      index === 0 ? "border-l-primary shadow-md" : "border-l-secondary/50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          index === 0
+                            ? "bg-gradient-to-r from-primary to-secondary text-white"
+                            : "bg-muted text-muted-foreground"
+                        }`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-navy text-lg">{play.name}</h3>
+                          {play.journey_stage && (
+                            <span className="text-xs text-muted-foreground">{play.journey_stage}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge
+                          className={`${
+                            play.confidence_score >= 70
+                              ? "bg-green-100 text-green-800 border-green-200"
+                              : play.confidence_score >= 60
+                              ? "bg-blue-100 text-blue-800 border-blue-200"
+                              : "bg-orange-100 text-orange-800 border-orange-200"
+                          }`}
+                        >
+                          {play.confidence_score}% confidence
+                        </Badge>
+                        {index === 0 && (
+                          <Badge variant="outline" className="text-xs border-primary text-primary">
+                            Top Recommendation
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{play.why_recommended}</p>
+
+                    <p className="text-sm text-foreground mb-3 leading-relaxed">
+                      {play.why_recommended}
+                    </p>
+
                     {play.jtbd && (
-                      <p className="text-xs text-muted-foreground italic">{play.jtbd.slice(0, 150)}...</p>
+                      <div className="bg-muted/30 rounded-lg p-3 mb-3">
+                        <p className="text-xs text-muted-foreground">
+                          <strong className="text-foreground">Job to be done:</strong> {play.jtbd}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2">
+                      {play.primary_success_metric && (
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <TrendingUp className="h-3 w-3" />
+                          <span className="font-medium">Key Metric:</span>
+                          <span>{play.primary_success_metric.split(":")[0]}</span>
+                        </div>
+                      )}
+                      {play.time_to_value && (
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground ml-4">
+                          <Calendar className="h-3 w-3" />
+                          <span className="font-medium">TTV:</span>
+                          <span>{play.time_to_value.split(",")[0]}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {play.kpis && (
+                      <div className="mt-3 pt-3 border-t">
+                        <div className="flex flex-wrap gap-1.5">
+                          {play.kpis.split(",").slice(0, 4).map((kpi, i) => (
+                            <Badge key={i} variant="secondary" className="text-xs">
+                              {kpi.trim()}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </Card>
                 ))}
               </div>
+
+              {scoredPlays.length > 5 && (
+                <p className="text-center text-sm text-muted-foreground mt-4">
+                  + {scoredPlays.length - 5} more plays available based on your profile
+                </p>
+              )}
             </Card>
           </section>
         )}
