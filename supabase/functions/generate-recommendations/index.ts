@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { storeIntelligence } from "../_shared/memory-client.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
@@ -170,6 +171,19 @@ Generate personalized recommendations for the most relevant plays (up to 5). Foc
     const validatedRecommendations = recommendations.recommendations?.filter(
       (rec: any) => GROWTH_PLAYS_CATALOG.includes(rec.play_name)
     ) || [];
+
+    // MEMORY WRITE: Store assessment result in shared memory layer
+    const topPlays = validatedRecommendations.slice(0, 3).map((r: any) => r.play_name).join(", ");
+    const avgScore = Math.round(((input.data_readiness_score || 3) + (input.activation_score || 3) + (input.decisioning_score || 3) + (input.governance_score || 3)) / 4 * 20);
+    const memoryContent = `[Assessment] ${input.company_name || "Anonymous"} (${input.industry_name || "Unknown"}, ${input.persona_type || "Unknown"}) scored ${avgScore}/100 readiness. Maturity: Data=${input.data_readiness_score}, Activation=${input.activation_score}, Decisioning=${input.decisioning_score}, Governance=${input.governance_score}. Challenges: ${(input.challenges || []).join(", ")}. Goals: ${(input.goals || []).join(", ")}. Top plays: ${topPlays}.`;
+    storeIntelligence(memoryContent, {
+      type: "assessment_result",
+      company: input.company_name,
+      industry: input.industry_name,
+      persona: input.persona_type,
+      readiness_score: avgScore,
+      source: "generate_recommendations",
+    }).catch(e => console.warn("[Memory] Failed to store assessment:", e));
 
     return new Response(
       JSON.stringify({

@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Users, Target, Lightbulb, Search, Calendar, Filter, ExternalLink, ChevronRight } from "lucide-react";
+import { ChatSidebar } from "@/components/ChatSidebar";
+import { TrendingUp, TrendingDown, Users, Target, Lightbulb, Search, Calendar, Filter, ExternalLink, ChevronRight, MessageSquare } from "lucide-react";
 
 const mockAssessments = [
   {
@@ -54,6 +55,7 @@ const tierColors = {
 
 export default function BlueconicView() {
   const [selectedAssessment, setSelectedAssessment] = useState<typeof mockAssessments[0] | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -446,6 +448,17 @@ export default function BlueconicView() {
           </Tabs>
         </SheetContent>
       </Sheet>
+
+      {/* AI Chat FAB */}
+      <Button
+        onClick={() => setIsChatOpen(true)}
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40"
+        size="icon"
+      >
+        <MessageSquare className="h-6 w-6" />
+      </Button>
+
+      <ChatSidebar isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }
