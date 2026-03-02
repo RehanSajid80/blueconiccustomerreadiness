@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Industry, Persona, AssessmentData, ChallengeType, GoalType } from "@/types/assessment";
-import { Step1Industry } from "./Step1Industry";
+import { Step1Industry, SalesforceLookupData } from "./Step1Industry";
 import { Step2Maturity, maturitySections } from "./Step2Maturity";
 import { Step3Challenges } from "./Step3Challenges";
 import { Step3Business } from "./Step3Business";
@@ -29,6 +29,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [loading, setLoading] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
+  const [salesforceData, setSalesforceData] = useState<SalesforceLookupData | null>(null);
 
   // Demo mode toggle: Ctrl+Alt+D
   useEffect(() => {
@@ -183,10 +184,38 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
 
     if (error) {
       console.error("Error saving assessment:", error);
+      setLoading(false);
       return;
     }
 
     if (data) {
+      // Salesforce write-back (fire and forget — don't block the user)
+      const resultsUrl = `${window.location.origin}/results/${data.id}`;
+      const industryName = industries.find((i) => i.id === assessmentData.industry_id)?.name;
+      const personaType = personas.find((p) => p.id === assessmentData.persona_id)?.type;
+
+      supabase.functions.invoke("salesforce-writeback", {
+        body: {
+          assessment_id: data.id,
+          results_url: resultsUrl,
+          email: assessmentData.email,
+          company_name: assessmentData.company_name,
+          first_name: salesforceData?.data?.first_name || undefined,
+          last_name: salesforceData?.data?.last_name || undefined,
+          data_readiness_score: dataScore,
+          activation_score: activationScore,
+          decisioning_score: decisioningScore,
+          governance_score: governanceScore,
+          growth_readiness_score: readinessScore,
+          industry_name: industryName,
+          persona_type: personaType,
+          challenges: assessmentData.challenges,
+          goals: assessmentData.goals,
+          salesforce_id: salesforceData?.data?.id || undefined,
+          salesforce_type: salesforceData?.source || undefined,
+        },
+      }).catch((err) => console.warn("Salesforce write-back failed:", err));
+
       onComplete(data.id);
     }
   };
@@ -261,6 +290,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               onEmailChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, email: value }))
               }
+              onSalesforceLookup={(data) => setSalesforceData(data)}
             />
           )}
 

@@ -1,7 +1,25 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Industry, Persona } from "@/types/assessment";
-import { Check, Building2, User, Building, Mail, Globe } from "lucide-react";
+import { Check, Building2, User, Building, Mail, Globe, Loader2, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+
+export interface SalesforceLookupData {
+  found: boolean;
+  source: "contact" | "lead" | null;
+  data: {
+    id?: string;
+    first_name?: string;
+    last_name?: string;
+    company_name?: string;
+    industry?: string;
+    account_id?: string;
+    owner_name?: string;
+    title?: string;
+    existing_customer?: boolean;
+  } | null;
+}
 
 interface Step1IndustryProps {
   industries: Industry[];
@@ -16,6 +34,7 @@ interface Step1IndustryProps {
   onCompanyNameChange: (value: string) => void;
   onCompanyUrlChange: (value: string) => void;
   onEmailChange: (value: string) => void;
+  onSalesforceLookup?: (data: SalesforceLookupData) => void;
 }
 
 const industryIcons: Record<string, string> = {
@@ -47,7 +66,39 @@ export function Step1Industry({
   onCompanyNameChange,
   onCompanyUrlChange,
   onEmailChange,
+  onSalesforceLookup,
 }: Step1IndustryProps) {
+  const [sfLoading, setSfLoading] = useState(false);
+  const [sfResult, setSfResult] = useState<SalesforceLookupData | null>(null);
+
+  const handleEmailBlur = async () => {
+    const trimmed = email.trim();
+    if (!trimmed || !trimmed.includes("@") || !onSalesforceLookup) return;
+
+    setSfLoading(true);
+    setSfResult(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("salesforce-lookup", {
+        body: { email: trimmed },
+      });
+
+      if (!error && data) {
+        setSfResult(data);
+        onSalesforceLookup(data);
+
+        // Auto-fill company name if found and not already filled
+        if (data.found && data.data?.company_name && !companyName) {
+          onCompanyNameChange(data.data.company_name);
+        }
+      }
+    } catch (err) {
+      console.error("Salesforce lookup failed:", err);
+    } finally {
+      setSfLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -100,8 +151,23 @@ export function Step1Industry({
           placeholder="Enter your email address"
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
+          onBlur={handleEmailBlur}
           className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
         />
+        {sfLoading && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Looking up your account...
+          </div>
+        )}
+        {sfResult?.found && sfResult.data && (
+          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+            <CheckCircle2 className="w-4 h-4" />
+            {sfResult.data.existing_customer
+              ? `Welcome back! We found your account at ${sfResult.data.company_name}.`
+              : `Found you at ${sfResult.data.company_name}. We've pre-filled your details.`}
+          </div>
+        )}
       </div>
 
       {/* Industry Selection */}

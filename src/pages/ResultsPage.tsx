@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentResult, GrowthPlay, Benchmark, ScoredGrowthPlay, Industry, Persona } from "@/types/assessment";
 import { scoreGrowthPlays, getMaturityLabel } from "@/lib/scoring";
+import { useAIRecommendations, mergeAIRecommendations } from "@/hooks/useAIRecommendations";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -90,6 +91,25 @@ export default function ResultsPage() {
   const [industry, setIndustry] = useState<Industry | null>(null);
   const [persona, setPersona] = useState<Persona | null>(null);
   const [loading, setLoading] = useState(true);
+  const [allGrowthPlays, setAllGrowthPlays] = useState<GrowthPlay[]>([]);
+
+  // AI-enhanced recommendations from the generate-recommendations edge function
+  const { recommendations: aiRecommendations } = useAIRecommendations(
+    assessment,
+    allGrowthPlays,
+    industry?.name,
+    persona?.type
+  );
+
+  // Merge AI "why_recommended" into scored plays when available
+  useEffect(() => {
+    if (aiRecommendations.length > 0 && scoredPlays.length > 0) {
+      const merged = mergeAIRecommendations(scoredPlays, aiRecommendations);
+      setScoredPlays(merged);
+    }
+    // Only re-merge when AI recommendations arrive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aiRecommendations]);
 
   useEffect(() => {
     if (!id) {
@@ -148,6 +168,8 @@ export default function ResultsPage() {
           industries: play.industries?.map((i: any) => i.industry) || [],
           personas: play.personas?.map((p: any) => p.persona) || [],
         }));
+
+        setAllGrowthPlays(transformedPlays);
 
         const scored = scoreGrowthPlays(
           transformedPlays,
