@@ -206,8 +206,11 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
 
       const urlParams = new URLSearchParams(window.location.search);
 
-      supabase.functions.invoke("salesforce-writeback", {
-        body: {
+      // n8n webhook for Salesforce sync (fire and forget)
+      fetch("https://blueconic.app.n8n.cloud/webhook/growth-readiness-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           assessment_id: data.id,
           results_url: resultsUrl,
           email: assessmentData.email,
@@ -230,8 +233,8 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
           utm_content: urlParams.get("utm_content"),
           salesforce_id: salesforceData?.data?.id || undefined,
           salesforce_type: salesforceData?.source || undefined,
-        },
-      }).catch((err) => console.warn("Salesforce write-back failed:", err));
+        }),
+      }).catch((err) => console.warn("n8n Salesforce sync failed:", err));
 
       onComplete(data.id);
     }
