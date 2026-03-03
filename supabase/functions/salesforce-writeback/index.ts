@@ -35,10 +35,46 @@ interface AssessmentPayload {
   persona_type?: string;
   challenges?: string[];
   goals?: string[];
+  growth_play_recs?: string[];
+
+  // UTM tracking
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
 
   // If we already found them in Salesforce during lookup
   salesforce_id?: string;
   salesforce_type?: "contact" | "lead";
+}
+
+/**
+ * Build the custom field data for Salesforce Lead/Contact
+ */
+function buildCustomFields(payload: AssessmentPayload): Record<string, any> {
+  const maturityBand = getMaturityBand(payload.growth_readiness_score);
+  const today = new Date().toISOString().split("T")[0];
+
+  return {
+    // Data Maturity custom fields
+    Data_Maturity_Activation_Score__c: payload.activation_score,
+    Data_Maturity_Assessment_Date__c: today,
+    Data_Maturity_Assessment_Results_URL__c: payload.results_url,
+    Data_Maturity_Challenges__c: payload.challenges?.join(", ") || null,
+    Data_Maturity_Data_Readiness_Score__c: payload.data_readiness_score,
+    Data_Maturity_Decisioning_Score__c: payload.decisioning_score,
+    Data_Maturity_Goals__c: payload.goals?.join(", ") || null,
+    Data_Maturity_Governance_Score__c: payload.governance_score,
+    Data_Maturity_Growth_Play_Recs__c: payload.growth_play_recs?.join("; ") || null,
+    Data_Maturity_Growth_Readiness_Score__c: payload.growth_readiness_score,
+    Data_Maturity_Maturity_Band__c: maturityBand,
+
+    // UTM tracking fields
+    utm_source__c: payload.utm_source || null,
+    Medium_utm__c: payload.utm_medium || null,
+    Campaign_utm__c: payload.utm_campaign || null,
+    Content_utm__c: payload.utm_content || null,
+  };
 }
 
 async function getSalesforceToken(): Promise<{ access_token: string; instance_url: string }> {
@@ -71,7 +107,6 @@ async function createLead(
   accessToken: string,
   payload: AssessmentPayload
 ): Promise<{ id: string; success: boolean }> {
-  const nameParts = (payload.company_name || "Unknown").split(" ");
   const leadData: Record<string, any> = {
     FirstName: payload.first_name || "Assessment",
     LastName: payload.last_name || "Participant",
@@ -80,6 +115,7 @@ async function createLead(
     LeadSource: "Growth Readiness Assessment",
     Industry: payload.industry_name || null,
     Description: buildDescription(payload),
+    ...buildCustomFields(payload),
   };
 
   const response = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Lead`, {
@@ -100,8 +136,7 @@ async function createLead(
 }
 
 /**
- * Update an existing Lead or Contact with assessment data via Description field.
- * If you have custom fields, replace Description with your custom field API names.
+ * Update an existing Lead or Contact with assessment data
  */
 async function updateRecord(
   instanceUrl: string,
@@ -112,6 +147,7 @@ async function updateRecord(
 ): Promise<void> {
   const updateData: Record<string, any> = {
     Description: buildDescription(payload),
+    ...buildCustomFields(payload),
   };
 
   // If updating a Lead, also set LeadSource

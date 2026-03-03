@@ -9,6 +9,7 @@ import { Step2Maturity, maturitySections } from "./Step2Maturity";
 import { Step3Challenges } from "./Step3Challenges";
 import { Step3Business } from "./Step3Business";
 import { useNavigate } from "react-router-dom";
+import { getEligiblePlays } from "@/data/growthPlays";
 
 
 interface AssessmentWizardProps {
@@ -194,6 +195,17 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
       const industryName = industries.find((i) => i.id === assessmentData.industry_id)?.name;
       const personaType = personas.find((p) => p.id === assessmentData.persona_id)?.type;
 
+      // Calculate top growth play recommendations
+      const eligiblePlays = getEligiblePlays({
+        dataReadiness: dataScore,
+        activation: activationScore,
+        decisioning: decisioningScore,
+        governance: governanceScore,
+      });
+      const topPlayNames = eligiblePlays.slice(0, 5).map((p) => p.name);
+
+      const urlParams = new URLSearchParams(window.location.search);
+
       supabase.functions.invoke("salesforce-writeback", {
         body: {
           assessment_id: data.id,
@@ -211,6 +223,11 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
           persona_type: personaType,
           challenges: assessmentData.challenges,
           goals: assessmentData.goals,
+          growth_play_recs: topPlayNames,
+          utm_source: urlParams.get("utm_source"),
+          utm_medium: urlParams.get("utm_medium"),
+          utm_campaign: urlParams.get("utm_campaign"),
+          utm_content: urlParams.get("utm_content"),
           salesforce_id: salesforceData?.data?.id || undefined,
           salesforce_type: salesforceData?.source || undefined,
         },
