@@ -1,0 +1,517 @@
+{
+  "name": "Growth Readiness → Salesforce",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "growth-readiness-webhook",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Assessment Received",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract assessment data from webhook body\nconst body = $input.first().json.body;\n\n// Calculate maturity band\nconst score = body.growth_readiness_score || 0;\nlet maturityBand = 'Emerging';\nif (score > 80) maturityBand = 'Autonomous';\nelse if (score > 60) maturityBand = 'Intelligent';\nelse if (score > 40) maturityBand = 'Transforming';\nelse if (score > 20) maturityBand = 'Scaling';\n\n// Format today's date\nconst today = new Date().toISOString().split('T')[0];\n\n// Build description\nconst descLines = [\n  '=== BlueConic Growth Readiness Assessment ===',\n  `Date: ${today}`,\n  `Report: ${body.results_url || ''}`,\n  '',\n  `Overall Readiness: ${score}/100 (${maturityBand})`,\n  '',\n  'Pillar Scores (1-5):',\n  `  Data Readiness: ${body.data_readiness_score || 0}`,\n  `  Activation: ${body.activation_score || 0}`,\n  `  Decisioning: ${body.decisioning_score || 0}`,\n  `  Governance: ${body.governance_score || 0}`,\n];\nif (body.industry_name) descLines.push('', `Industry: ${body.industry_name}`);\nif (body.persona_type) descLines.push(`Persona: ${body.persona_type}`);\nif (body.challenges && body.challenges.length) descLines.push('', `Challenges: ${body.challenges.join(', ')}`);\nif (body.goals && body.goals.length) descLines.push(`Goals: ${body.goals.join(', ')}`);\nif (body.growth_play_recs && body.growth_play_recs.length) descLines.push('', `Recommended Plays: ${body.growth_play_recs.join('; ')}`);\n\nreturn [{\n  json: {\n    // Contact info\n    email: body.email || '',\n    first_name: body.first_name || 'Assessment',\n    last_name: body.last_name || 'Participant',\n    company_name: body.company_name || 'Unknown',\n    industry_name: body.industry_name || '',\n\n    // Salesforce lookup info (from prior email lookup)\n    salesforce_id: body.salesforce_id || null,\n    salesforce_type: body.salesforce_type || null,\n\n    // Scores\n    data_readiness_score: body.data_readiness_score || 0,\n    activation_score: body.activation_score || 0,\n    decisioning_score: body.decisioning_score || 0,\n    governance_score: body.governance_score || 0,\n    growth_readiness_score: score,\n    maturity_band: maturityBand,\n\n    // Formatted data\n    assessment_date: today,\n    results_url: body.results_url || '',\n    description: descLines.join('\\n'),\n    challenges_text: (body.challenges || []).join(', '),\n    goals_text: (body.goals || []).join(', '),\n    growth_plays_text: (body.growth_play_recs || []).join('; '),\n\n    // UTMs\n    utm_source: body.utm_source || '',\n    utm_medium: body.utm_medium || '',\n    utm_campaign: body.utm_campaign || '',\n    utm_content: body.utm_content || '',\n\n    // Routing flags\n    is_existing_record: !!(body.salesforce_id),\n    is_contact: body.salesforce_type === 'contact',\n    is_high_priority: score >= 40\n  }\n}];"
+      },
+      "id": "transform-data",
+      "name": "Transform Assessment Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-existing",
+              "leftValue": "={{ $json.is_existing_record }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-existing",
+      "name": "Existing SF Record?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "operation": "create",
+        "additionalFields": {
+          "firstname": "={{ $json.first_name }}",
+          "lastname": "={{ $json.last_name }}",
+          "email": "={{ $json.email }}",
+          "company": "={{ $json.company_name }}",
+          "leadSource": "Growth Readiness Assessment",
+          "industry": "={{ $json.industry_name }}",
+          "description": "={{ $json.description }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "Data_Maturity_Activation_Score__c",
+                "value": "={{ $json.activation_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Date__c",
+                "value": "={{ $json.assessment_date }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Results_URL__c",
+                "value": "={{ $json.results_url }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Challenges__c",
+                "value": "={{ $json.challenges_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Data_Readiness_Score__c",
+                "value": "={{ $json.data_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Decisioning_Score__c",
+                "value": "={{ $json.decisioning_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Goals__c",
+                "value": "={{ $json.goals_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Governance_Score__c",
+                "value": "={{ $json.governance_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Play_Recs__c",
+                "value": "={{ $json.growth_plays_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Readiness_Score__c",
+                "value": "={{ $json.growth_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Maturity_Band__c",
+                "value": "={{ $json.maturity_band }}"
+              },
+              {
+                "fieldId": "utm_source__c",
+                "value": "={{ $json.utm_source }}"
+              },
+              {
+                "fieldId": "Medium_utm__c",
+                "value": "={{ $json.utm_medium }}"
+              },
+              {
+                "fieldId": "Campaign_utm__c",
+                "value": "={{ $json.utm_campaign }}"
+              },
+              {
+                "fieldId": "Content_utm__c",
+                "value": "={{ $json.utm_content }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "create-lead",
+      "name": "Create New Lead",
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1,
+      "position": [900, 440],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Marketing Agents - Salesforce"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-contact",
+              "leftValue": "={{ $json.is_contact }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-contact-or-lead",
+      "name": "Contact or Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 160]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "update",
+        "contactId": "={{ $json.salesforce_id }}",
+        "updateFields": {
+          "description": "={{ $json.description }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "Data_Maturity_Activation_Score__c",
+                "value": "={{ $json.activation_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Date__c",
+                "value": "={{ $json.assessment_date }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Results_URL__c",
+                "value": "={{ $json.results_url }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Challenges__c",
+                "value": "={{ $json.challenges_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Data_Readiness_Score__c",
+                "value": "={{ $json.data_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Decisioning_Score__c",
+                "value": "={{ $json.decisioning_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Goals__c",
+                "value": "={{ $json.goals_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Governance_Score__c",
+                "value": "={{ $json.governance_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Play_Recs__c",
+                "value": "={{ $json.growth_plays_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Readiness_Score__c",
+                "value": "={{ $json.growth_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Maturity_Band__c",
+                "value": "={{ $json.maturity_band }}"
+              },
+              {
+                "fieldId": "utm_source__c",
+                "value": "={{ $json.utm_source }}"
+              },
+              {
+                "fieldId": "Medium_utm__c",
+                "value": "={{ $json.utm_medium }}"
+              },
+              {
+                "fieldId": "Campaign_utm__c",
+                "value": "={{ $json.utm_campaign }}"
+              },
+              {
+                "fieldId": "Content_utm__c",
+                "value": "={{ $json.utm_content }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "update-contact",
+      "name": "Update Contact",
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1,
+      "position": [1140, 80],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Marketing Agents - Salesforce"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "operation": "update",
+        "leadId": "={{ $json.salesforce_id }}",
+        "updateFields": {
+          "leadSource": "Growth Readiness Assessment",
+          "description": "={{ $json.description }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": "Data_Maturity_Activation_Score__c",
+                "value": "={{ $json.activation_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Date__c",
+                "value": "={{ $json.assessment_date }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Assessment_Results_URL__c",
+                "value": "={{ $json.results_url }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Challenges__c",
+                "value": "={{ $json.challenges_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Data_Readiness_Score__c",
+                "value": "={{ $json.data_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Decisioning_Score__c",
+                "value": "={{ $json.decisioning_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Goals__c",
+                "value": "={{ $json.goals_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Governance_Score__c",
+                "value": "={{ $json.governance_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Play_Recs__c",
+                "value": "={{ $json.growth_plays_text }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Growth_Readiness_Score__c",
+                "value": "={{ $json.growth_readiness_score }}"
+              },
+              {
+                "fieldId": "Data_Maturity_Maturity_Band__c",
+                "value": "={{ $json.maturity_band }}"
+              },
+              {
+                "fieldId": "utm_source__c",
+                "value": "={{ $json.utm_source }}"
+              },
+              {
+                "fieldId": "Medium_utm__c",
+                "value": "={{ $json.utm_medium }}"
+              },
+              {
+                "fieldId": "Campaign_utm__c",
+                "value": "={{ $json.utm_campaign }}"
+              },
+              {
+                "fieldId": "Content_utm__c",
+                "value": "={{ $json.utm_content }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "update-lead",
+      "name": "Update Existing Lead",
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1,
+      "position": [1140, 240],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Marketing Agents - Salesforce"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "task",
+        "operation": "create",
+        "additionalFields": {
+          "subject": "=Growth Readiness Assessment: {{ $('Transform Assessment Data').item.json.company_name }} ({{ $('Transform Assessment Data').item.json.maturity_band }})",
+          "description": "={{ $('Transform Assessment Data').item.json.company_name }} completed the Growth Readiness Assessment.\n\nScore: {{ $('Transform Assessment Data').item.json.growth_readiness_score }}/100 ({{ $('Transform Assessment Data').item.json.maturity_band }})\nReport: {{ $('Transform Assessment Data').item.json.results_url }}\n\nReview their results and follow up within 24 hours.",
+          "whoId": "={{ $json.id || $('Transform Assessment Data').item.json.salesforce_id }}",
+          "status": "Not Started",
+          "priority": "={{ $('Transform Assessment Data').item.json.is_high_priority ? 'High' : 'Normal' }}",
+          "activityDate": "={{ new Date(Date.now() + 86400000).toISOString().split('T')[0] }}"
+        }
+      },
+      "id": "create-task",
+      "name": "Create AE Task",
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1,
+      "position": [1380, 300],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Marketing Agents - Salesforce"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, action: $('Transform Assessment Data').item.json.is_existing_record ? 'updated' : 'created' }) }}"
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1600, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: 'Workflow failed' }) }}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1600, 500]
+    }
+  ],
+  "connections": {
+    "Webhook - Assessment Received": {
+      "main": [
+        [
+          {
+            "node": "Transform Assessment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform Assessment Data": {
+      "main": [
+        [
+          {
+            "node": "Existing SF Record?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existing SF Record?": {
+      "main": [
+        [
+          {
+            "node": "Contact or Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact or Lead?": {
+      "main": [
+        [
+          {
+            "node": "Update Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Existing Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Lead": {
+      "main": [
+        [
+          {
+            "node": "Create AE Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Contact": {
+      "main": [
+        [
+          {
+            "node": "Create AE Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Existing Lead": {
+      "main": [
+        [
+          {
+            "node": "Create AE Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create AE Task": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "tags": [
+    {
+      "name": "Growth Readiness"
+    },
+    {
+      "name": "Salesforce"
+    }
+  ]
+}
