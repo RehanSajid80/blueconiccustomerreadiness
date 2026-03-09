@@ -38,9 +38,11 @@ export const Navigation = () => {
             </div>
           </div>
 
-          <Button className="bg-primary hover:bg-primary/90 text-white">
-            Book a Session
-          </Button>
+          <a href="https://www.blueconic.com/request-demo" target="_blank" rel="noopener noreferrer">
+            <Button className="bg-primary hover:bg-primary/90 text-white">
+              Book a Demo
+            </Button>
+          </a>
         </div>
       </div>
     </nav>
