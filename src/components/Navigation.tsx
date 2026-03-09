@@ -38,7 +38,7 @@ export const Navigation = () => {
             </div>
           </div>
 
-          <a href="https://www.blueconic.com/request-demo" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.blueconic.com/request-demo?utm_source=growth_readiness_assessment&utm_medium=calculator&utm_campaign=data_maturity&utm_content=book_a_demo_nav" target="_blank" rel="noopener noreferrer">
             <Button className="bg-primary hover:bg-primary/90 text-white">
               Book a Demo
             </Button>
