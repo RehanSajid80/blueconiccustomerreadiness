@@ -133,6 +133,8 @@ export interface Logo {
 export interface AssessmentData {
   industry_id: string | null;
   persona_id: string | null;
+  first_name?: string;
+  last_name?: string;
   company_name?: string;
   company_url?: string;
   email?: string;

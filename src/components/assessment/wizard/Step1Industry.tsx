@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Industry, Persona } from "@/types/assessment";
-import { Check, Building2, User, Building, Mail, Globe, Loader2, CheckCircle2 } from "lucide-react";
+import { Check, Building2, User, Building, Mail, Globe, Loader2, CheckCircle2, UserCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,9 +26,13 @@ interface Step1IndustryProps {
   personas: Persona[];
   selectedIndustry: string | null;
   selectedPersona: string | null;
+  firstName: string;
+  lastName: string;
   companyName: string;
   companyUrl: string;
   email: string;
+  onFirstNameChange: (value: string) => void;
+  onLastNameChange: (value: string) => void;
   onIndustryChange: (value: string) => void;
   onPersonaChange: (value: string) => void;
   onCompanyNameChange: (value: string) => void;
@@ -58,9 +62,13 @@ export function Step1Industry({
   personas,
   selectedIndustry,
   selectedPersona,
+  firstName,
+  lastName,
   companyName,
   companyUrl,
   email,
+  onFirstNameChange,
+  onLastNameChange,
   onIndustryChange,
   onPersonaChange,
   onCompanyNameChange,
@@ -87,9 +95,17 @@ export function Step1Industry({
         setSfResult(data);
         onSalesforceLookup(data);
 
-        // Auto-fill company name if found and not already filled
-        if (data.found && data.data?.company_name && !companyName) {
-          onCompanyNameChange(data.data.company_name);
+        // Auto-fill fields if found and not already filled
+        if (data.found && data.data) {
+          if (data.data.company_name && !companyName) {
+            onCompanyNameChange(data.data.company_name);
+          }
+          if (data.data.first_name && !firstName) {
+            onFirstNameChange(data.data.first_name);
+          }
+          if (data.data.last_name && !lastName) {
+            onLastNameChange(data.data.last_name);
+          }
         }
       }
     } catch (err) {
@@ -106,6 +122,28 @@ export function Step1Industry({
         <p className="text-muted-foreground">
           Tell us about your company to personalize your assessment
         </p>
+      </div>
+
+      {/* Name Fields */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <UserCircle className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold text-navy">What's your name?</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => onFirstNameChange(e.target.value)}
+            className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
+          />
+          <Input
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => onLastNameChange(e.target.value)}
+            className="h-12 text-lg border-2 border-border/50 focus:border-primary rounded-xl"
+          />
+        </div>
       </div>
 
       {/* Company Name Input */}

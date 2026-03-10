@@ -51,6 +51,8 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const [assessmentData, setAssessmentData] = useState<AssessmentData>({
     industry_id: null,
     persona_id: null,
+    first_name: "",
+    last_name: "",
     company_name: "",
     company_url: "",
     email: "",
@@ -113,7 +115,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const canProceed = () => {
     if (demoMode) return true;
     if (step === 1) {
-      return assessmentData.industry_id && assessmentData.persona_id && assessmentData.company_name?.trim() && assessmentData.email?.trim();
+      return assessmentData.industry_id && assessmentData.persona_id && assessmentData.first_name?.trim() && assessmentData.last_name?.trim() && assessmentData.company_name?.trim() && assessmentData.email?.trim();
     }
     if (step === 2) {
       return allMaturityQuestionsAnswered();
@@ -215,8 +217,8 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
           results_url: resultsUrl,
           email: assessmentData.email,
           company_name: assessmentData.company_name,
-          first_name: salesforceData?.data?.first_name || undefined,
-          last_name: salesforceData?.data?.last_name || undefined,
+          first_name: assessmentData.first_name || salesforceData?.data?.first_name || undefined,
+          last_name: assessmentData.last_name || salesforceData?.data?.last_name || undefined,
           data_readiness_score: dataScore,
           activation_score: activationScore,
           decisioning_score: decisioningScore,
@@ -292,9 +294,17 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
               personas={personas}
               selectedIndustry={assessmentData.industry_id}
               selectedPersona={assessmentData.persona_id}
+              firstName={assessmentData.first_name || ""}
+              lastName={assessmentData.last_name || ""}
               companyName={assessmentData.company_name || ""}
               companyUrl={assessmentData.company_url || ""}
               email={assessmentData.email || ""}
+              onFirstNameChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, first_name: value }))
+              }
+              onLastNameChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, last_name: value }))
+              }
               onIndustryChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, industry_id: value }))
               }
