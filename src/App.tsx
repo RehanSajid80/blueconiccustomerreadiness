@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import AssessmentPage from "./pages/AssessmentPage";
 import ResultsPage from "./pages/ResultsPage";
-import Results from "./pages/Results";
 import BlueconicView from "./pages/BlueconicView";
 import AdminView from "./pages/AdminView";
 import NotFound from "./pages/NotFound";
@@ -23,7 +22,6 @@ const App = () => (
         <Navigation />
         <Routes>
           <Route path="/" element={<AssessmentPage />} />
-          <Route path="/results" element={<Results />} />
           <Route path="/results/:id" element={<ResultsPage />} />
           <Route path="/blueconic-view" element={<AdminGate><BlueconicView /></AdminGate>} />
           <Route path="/admin" element={<AdminGate><AdminView /></AdminGate>} />

@@ -21,13 +21,6 @@ export const Navigation = () => {
               >
                 Assessment
               </NavLink>
-              <NavLink
-                to="/results"
-                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
-                activeClassName="text-white"
-              >
-                Results
-              </NavLink>
             </div>
           </div>
 
