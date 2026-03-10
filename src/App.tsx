@@ -10,6 +10,7 @@ import Results from "./pages/Results";
 import BlueconicView from "./pages/BlueconicView";
 import AdminView from "./pages/AdminView";
 import NotFound from "./pages/NotFound";
+import { AdminGate } from "@/components/AdminGate";
 
 const queryClient = new QueryClient();
 
@@ -24,8 +25,8 @@ const App = () => (
           <Route path="/" element={<AssessmentPage />} />
           <Route path="/results" element={<Results />} />
           <Route path="/results/:id" element={<ResultsPage />} />
-          <Route path="/blueconic-view" element={<BlueconicView />} />
-          <Route path="/admin" element={<AdminView />} />
+          <Route path="/blueconic-view" element={<AdminGate><BlueconicView /></AdminGate>} />
+          <Route path="/admin" element={<AdminGate><AdminView /></AdminGate>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

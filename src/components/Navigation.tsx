@@ -28,13 +28,6 @@ export const Navigation = () => {
               >
                 Results
               </NavLink>
-              <NavLink
-                to="/blueconic-view"
-                className="text-sm font-medium text-white/70 transition-colors hover:text-white"
-                activeClassName="text-white"
-              >
-                BlueConic View
-              </NavLink>
             </div>
           </div>
 
