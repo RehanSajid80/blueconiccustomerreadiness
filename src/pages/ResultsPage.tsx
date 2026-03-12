@@ -131,7 +131,12 @@ export default function ResultsPage() {
         return;
       }
 
-      setAssessment(assessmentData);
+      const formattedAssessment = {
+        ...assessmentData,
+        challenges: (assessmentData.challenges as unknown as ChallengeType[]) || [],
+        goals: (assessmentData.goals as unknown as GoalType[]) || [],
+      };
+      setAssessment(formattedAssessment);
 
       // Load industry and persona details
       if (assessmentData.industry_id) {
