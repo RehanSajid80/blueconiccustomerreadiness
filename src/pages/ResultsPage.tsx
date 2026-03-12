@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { AssessmentResult, GrowthPlay, Benchmark, ScoredGrowthPlay, Industry, Persona } from "@/types/assessment";
+import { AssessmentResult, GrowthPlay, Benchmark, ScoredGrowthPlay, Industry, Persona, ChallengeType, GoalType } from "@/types/assessment";
 import { scoreGrowthPlays, getMaturityLabel } from "@/lib/scoring";
 import { useAIRecommendations, mergeAIRecommendations } from "@/hooks/useAIRecommendations";
 import { Button } from "@/components/ui/button";
