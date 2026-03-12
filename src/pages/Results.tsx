@@ -173,23 +173,17 @@ export default function Results() {
             Work with a BlueConic expert to create a customized roadmap based on your readiness assessment.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
-              Book a Customer Growth Working Session
-            </Button>
-            <Button size="lg" variant="outline" className="gap-2">
-              <Mail className="h-4 w-4" />
-              Email Me This Report
-            </Button>
-          </div>
-          <div className="flex gap-4 justify-center mt-6 text-sm">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Download PDF
-            </Button>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Share2 className="h-4 w-4" />
-              Share with Team
-            </Button>
+            <a href="https://www.blueconic.com/request-demo?utm_source=growth_readiness_assessment&utm_medium=calculator&utm_campaign=data_maturity&utm_content=book_growth_session_results" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                Book a Customer Growth Working Session
+              </Button>
+            </a>
+            <a href="https://www.blueconic.com/request-demo?utm_source=growth_readiness_assessment&utm_medium=calculator&utm_campaign=data_maturity&utm_content=download_pdf_results" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </a>
           </div>
         </Card>
       </div>

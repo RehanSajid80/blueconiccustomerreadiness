@@ -646,27 +646,20 @@ export default function ResultsPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 px-8">
-                <Download className="h-4 w-4" />
-                Download Your Full Blueprint
-              </Button>
-              <Button size="lg" variant="outline" className="gap-2 px-8">
-                <Calendar className="h-4 w-4" />
-                Book a Growth Strategy Review
-              </Button>
+              <a href="https://www.blueconic.com/request-demo?utm_source=growth_readiness_assessment&utm_medium=calculator&utm_campaign=data_maturity&utm_content=download_blueprint_results" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 px-8">
+                  <Download className="h-4 w-4" />
+                  Download Your Full Blueprint
+                </Button>
+              </a>
+              <a href="https://www.blueconic.com/request-demo?utm_source=growth_readiness_assessment&utm_medium=calculator&utm_campaign=data_maturity&utm_content=book_strategy_review_results" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="gap-2 px-8">
+                  <Calendar className="h-4 w-4" />
+                  Book a Growth Strategy Review
+                </Button>
+              </a>
             </div>
-            
-            <div className="flex gap-6 justify-center text-sm">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <Mail className="h-4 w-4" />
-                Email My Report
-              </Button>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <Share2 className="h-4 w-4" />
-                Share with Team
-              </Button>
-            </div>
-            
+
             <p className="text-xs text-muted-foreground mt-8">
               See how your maturity profile compares to leaders in your category
             </p>
