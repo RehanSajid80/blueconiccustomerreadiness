@@ -178,7 +178,7 @@ export default function ResultsPage() {
 
         const scored = scoreGrowthPlays(
           transformedPlays,
-          assessmentData,
+          formattedAssessment,
           assessmentData.industry_id,
           assessmentData.persona_id
         );
