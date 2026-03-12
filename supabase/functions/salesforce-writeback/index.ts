@@ -100,13 +100,15 @@ async function getSalesforceToken(): Promise<{ access_token: string; instance_ur
 }
 
 /**
- * Create a new Lead in Salesforce
+ * Create a new Lead in Salesforce.
+ * If Salesforce duplicate rules block the insert, extract the existing
+ * record ID and update it instead — so no lead is ever lost.
  */
 async function createLead(
   instanceUrl: string,
   accessToken: string,
   payload: AssessmentPayload
-): Promise<{ id: string; success: boolean }> {
+): Promise<{ id: string; success: boolean; action: "created" | "updated" }> {
   const leadData: Record<string, any> = {
     FirstName: payload.first_name || "Assessment",
     LastName: payload.last_name || "Participant",
@@ -123,16 +125,93 @@ async function createLead(
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
+      // Allow saving duplicates if Salesforce has "Allow" duplicate rules,
+      // but still respect "Block" rules (handled in the catch below)
+      "Sforce-Duplicate-Rule-Header": "allowSave=true",
     },
     body: JSON.stringify(leadData),
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
+  if (response.ok) {
+    const result = await response.json();
+    return { id: result.id, success: true, action: "created" };
+  }
+
+  // Parse the error to check for duplicate detection
+  const errorText = await response.text();
+  let errorBody: any[];
+  try {
+    errorBody = JSON.parse(errorText);
+  } catch {
     throw new Error(`Failed to create Lead: ${errorText}`);
   }
 
-  return response.json();
+  const dupError = Array.isArray(errorBody)
+    ? errorBody.find((e: any) => e.errorCode === "DUPLICATES_DETECTED" || e.errorCode === "DUPLICATE_VALUE")
+    : null;
+
+  if (dupError) {
+    console.log("[salesforce-writeback] Duplicate detected, attempting to find and update existing record");
+
+    // Try to extract the existing record ID from the duplicate result
+    let existingId: string | null = null;
+
+    // Salesforce DUPLICATES_DETECTED includes matchResults with matched record IDs
+    if (dupError.duplicateResult?.matchResults) {
+      for (const matchResult of dupError.duplicateResult.matchResults) {
+        if (matchResult.matchRecords?.length > 0) {
+          existingId = matchResult.matchRecords[0].record?.Id;
+          break;
+        }
+      }
+    }
+
+    // Fallback: if errorCode is DUPLICATE_VALUE, the ID is often in the message
+    if (!existingId && dupError.message) {
+      const idMatch = dupError.message.match(/([a-zA-Z0-9]{15,18})/);
+      if (idMatch) {
+        existingId = idMatch[1];
+      }
+    }
+
+    // Last resort: query Salesforce for the existing Lead by email
+    if (!existingId) {
+      existingId = await findLeadByEmail(instanceUrl, accessToken, payload.email);
+    }
+
+    if (existingId) {
+      console.log(`[salesforce-writeback] Updating existing Lead ${existingId}`);
+      await updateRecord(instanceUrl, accessToken, "Lead", existingId, payload);
+      return { id: existingId, success: true, action: "updated" };
+    }
+
+    // If we still can't find the duplicate, throw the original error
+    throw new Error(`Duplicate detected but could not find existing record: ${errorText}`);
+  }
+
+  throw new Error(`Failed to create Lead: ${errorText}`);
+}
+
+/**
+ * Find an existing Lead by email via SOQL query (fallback for duplicate handling)
+ */
+async function findLeadByEmail(
+  instanceUrl: string,
+  accessToken: string,
+  email: string
+): Promise<string | null> {
+  const query = `SELECT Id FROM Lead WHERE Email = '${email.replace(/'/g, "\\'")}' ORDER BY CreatedDate DESC LIMIT 1`;
+  const response = await fetch(
+    `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
+
+  if (!response.ok) return null;
+
+  const result = await response.json();
+  return result.records?.length > 0 ? result.records[0].Id : null;
 }
 
 /**
