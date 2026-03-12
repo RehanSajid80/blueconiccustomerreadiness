@@ -199,7 +199,7 @@ Generate personalized recommendations for the most relevant plays (up to 5). Foc
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: (error as Error).message,
         recommendations: []
       }),
       {

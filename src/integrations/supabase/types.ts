@@ -18,7 +18,9 @@ export type Database = {
         Row: {
           activation_score: number | null
           aov: number | null
+          challenges: Json | null
           company_name: string | null
+          company_url: string | null
           consent_rate: number | null
           conversion_rate: number | null
           created_at: string
@@ -26,6 +28,7 @@ export type Database = {
           decisioning_score: number | null
           email: string | null
           experimentation_score: number | null
+          goals: Json | null
           governance_score: number | null
           growth_readiness_score: number | null
           id: string
@@ -41,7 +44,9 @@ export type Database = {
         Insert: {
           activation_score?: number | null
           aov?: number | null
+          challenges?: Json | null
           company_name?: string | null
+          company_url?: string | null
           consent_rate?: number | null
           conversion_rate?: number | null
           created_at?: string
@@ -49,6 +54,7 @@ export type Database = {
           decisioning_score?: number | null
           email?: string | null
           experimentation_score?: number | null
+          goals?: Json | null
           governance_score?: number | null
           growth_readiness_score?: number | null
           id?: string
@@ -64,7 +70,9 @@ export type Database = {
         Update: {
           activation_score?: number | null
           aov?: number | null
+          challenges?: Json | null
           company_name?: string | null
+          company_url?: string | null
           consent_rate?: number | null
           conversion_rate?: number | null
           created_at?: string
@@ -72,6 +80,7 @@ export type Database = {
           decisioning_score?: number | null
           email?: string | null
           experimentation_score?: number | null
+          goals?: Json | null
           governance_score?: number | null
           growth_readiness_score?: number | null
           id?: string
@@ -144,6 +153,103 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      chat_feedback: {
+        Row: {
+          created_at: string | null
+          feedback_text: string | null
+          id: string
+          message_id: string | null
+          rating: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          message_id?: string | null
+          rating?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          message_id?: string | null
+          rating?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_feedback_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          memories_stored: number | null
+          memory_ids_used: string[] | null
+          role: string
+          session_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          memories_stored?: number | null
+          memory_ids_used?: string[] | null
+          role: string
+          session_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          memories_stored?: number | null
+          memory_ids_used?: string[] | null
+          role?: string
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_sessions: {
+        Row: {
+          created_at: string | null
+          id: string
+          memory_count: number | null
+          title: string | null
+          updated_at: string | null
+          user_identifier: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          memory_count?: number | null
+          title?: string | null
+          updated_at?: string | null
+          user_identifier?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          memory_count?: number | null
+          title?: string | null
+          updated_at?: string | null
+          user_identifier?: string | null
+        }
+        Relationships: []
       }
       content_blocks: {
         Row: {
@@ -260,6 +366,7 @@ export type Database = {
           name: string
           prerequisites: string | null
           primary_success_metric: string | null
+          product_type: string | null
           recency_score: number | null
           relevance_score: number | null
           risk_mitigation: string | null
@@ -294,6 +401,7 @@ export type Database = {
           name: string
           prerequisites?: string | null
           primary_success_metric?: string | null
+          product_type?: string | null
           recency_score?: number | null
           relevance_score?: number | null
           risk_mitigation?: string | null
@@ -328,6 +436,7 @@ export type Database = {
           name?: string
           prerequisites?: string | null
           primary_success_metric?: string | null
+          product_type?: string | null
           recency_score?: number | null
           relevance_score?: number | null
           risk_mitigation?: string | null
