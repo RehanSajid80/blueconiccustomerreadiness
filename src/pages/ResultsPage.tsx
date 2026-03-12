@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { AssessmentResult, GrowthPlay, Benchmark, ScoredGrowthPlay, Industry, Persona } from "@/types/assessment";
+import { AssessmentResult, GrowthPlay, Benchmark, ScoredGrowthPlay, Industry, Persona, ChallengeType, GoalType } from "@/types/assessment";
 import { scoreGrowthPlays, getMaturityLabel } from "@/lib/scoring";
 import { useAIRecommendations, mergeAIRecommendations } from "@/hooks/useAIRecommendations";
 import { Button } from "@/components/ui/button";
@@ -131,7 +131,12 @@ export default function ResultsPage() {
         return;
       }
 
-      setAssessment(assessmentData);
+      const formattedAssessment = {
+        ...assessmentData,
+        challenges: (assessmentData.challenges as unknown as ChallengeType[]) || [],
+        goals: (assessmentData.goals as unknown as GoalType[]) || [],
+      };
+      setAssessment(formattedAssessment);
 
       // Load industry and persona details
       if (assessmentData.industry_id) {
@@ -173,7 +178,7 @@ export default function ResultsPage() {
 
         const scored = scoreGrowthPlays(
           transformedPlays,
-          assessmentData,
+          formattedAssessment,
           assessmentData.industry_id,
           assessmentData.persona_id
         );
