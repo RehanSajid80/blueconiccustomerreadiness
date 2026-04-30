@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Database, Users, Building2, Target, BarChart3, Loader2 } from "lucide-react";
+import { Database, Users, Building2, Target, BarChart3, Loader2, Mail } from "lucide-react";
 
 interface GrowthPlay {
   id: string;
@@ -64,24 +64,37 @@ interface Assessment {
   created_at: string;
 }
 
+interface EmailCapture {
+  id: string;
+  email: string;
+  captured_at: string;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  completed_assessment: boolean;
+  assessment_id: string | null;
+}
+
 export default function AdminView() {
   const [growthPlays, setGrowthPlays] = useState<GrowthPlay[]>([]);
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [benchmarks, setBenchmarks] = useState<Benchmark[]>([]);
   const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [emailCaptures, setEmailCaptures] = useState<EmailCapture[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      
-      const [playsRes, industriesRes, personasRes, benchmarksRes, assessmentsRes] = await Promise.all([
+
+      const [playsRes, industriesRes, personasRes, benchmarksRes, assessmentsRes, capturesRes] = await Promise.all([
         supabase.from("growth_plays").select("*").order("name"),
         supabase.from("industries").select("*").order("name"),
         supabase.from("personas").select("*").order("name"),
         supabase.from("benchmarks").select("*"),
         supabase.from("assessments").select("*").order("created_at", { ascending: false }).limit(20),
+        supabase.from("email_captures").select("*").order("captured_at", { ascending: false }).limit(100),
       ]);
 
       if (playsRes.data) setGrowthPlays(playsRes.data);
@@ -89,6 +102,7 @@ export default function AdminView() {
       if (personasRes.data) setPersonas(personasRes.data);
       if (benchmarksRes.data) setBenchmarks(benchmarksRes.data);
       if (assessmentsRes.data) setAssessments(assessmentsRes.data);
+      if (capturesRes.data) setEmailCaptures(capturesRes.data);
 
       setLoading(false);
     }
@@ -122,8 +136,16 @@ export default function AdminView() {
           </p>
         </div>
 
-        <Tabs defaultValue="growth-plays" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-muted/50">
+        <Tabs defaultValue="email-captures" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6 bg-muted/50">
+            <TabsTrigger value="email-captures" className="gap-2">
+              <Mail className="h-4 w-4" />
+              Email Captures ({emailCaptures.length})
+            </TabsTrigger>
+            <TabsTrigger value="assessments" className="gap-2">
+              <Database className="h-4 w-4" />
+              Assessments ({assessments.length})
+            </TabsTrigger>
             <TabsTrigger value="growth-plays" className="gap-2">
               <Target className="h-4 w-4" />
               Growth Plays ({growthPlays.length})
@@ -140,11 +162,65 @@ export default function AdminView() {
               <BarChart3 className="h-4 w-4" />
               Benchmarks ({benchmarks.length})
             </TabsTrigger>
-            <TabsTrigger value="assessments" className="gap-2">
-              <Database className="h-4 w-4" />
-              Assessments ({assessments.length})
-            </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="email-captures">
+            <Card className="p-6 overflow-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">Email Captures (Last 100)</h2>
+                <div className="flex gap-2 text-sm">
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    {emailCaptures.filter((c) => c.completed_assessment).length} completed
+                  </Badge>
+                  <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                    {emailCaptures.filter((c) => !c.completed_assessment).length} dropped off
+                  </Badge>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Every email entered at Step 1 — including users who didn't complete the assessment.
+              </p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>UTM Source</TableHead>
+                    <TableHead>UTM Campaign</TableHead>
+                    <TableHead>Captured</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {emailCaptures.map((capture) => (
+                    <TableRow key={capture.id}>
+                      <TableCell className="font-medium">{capture.email}</TableCell>
+                      <TableCell>
+                        {capture.completed_assessment ? (
+                          <Badge className="bg-green-500 hover:bg-green-600">Completed</Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                            Dropped off
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-sm">{capture.utm_source || "-"}</TableCell>
+                      <TableCell className="text-sm">{capture.utm_campaign || "-"}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(capture.captured_at).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {emailCaptures.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        No emails captured yet
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="growth-plays">
             <Card className="p-6 overflow-auto">

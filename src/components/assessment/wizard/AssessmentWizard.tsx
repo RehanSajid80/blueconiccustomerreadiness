@@ -32,6 +32,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const [loading, setLoading] = useState(false);
   const [demoMode, setDemoMode] = useState(false);
   const [salesforceData, setSalesforceData] = useState<SalesforceLookupData | null>(null);
+  const [emailCaptureId, setEmailCaptureId] = useState<string | null>(null);
 
   // Demo mode toggle: Ctrl+Alt+D
   useEffect(() => {
@@ -201,6 +202,15 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     }
 
     if (data) {
+      // Mark email capture as completed and link to assessment (fire and forget)
+      if (emailCaptureId) {
+        supabase
+          .from("email_captures")
+          .update({ completed_assessment: true, assessment_id: data.id })
+          .eq("id", emailCaptureId)
+          .then(() => undefined);
+      }
+
       // Salesforce write-back (fire and forget — don't block the user)
       const resultsUrl = `${window.location.origin}/results/${data.id}`;
       const industryName = industries.find((i) => i.id === assessmentData.industry_id)?.name;
@@ -316,6 +326,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                 setAssessmentData((prev) => ({ ...prev, company_name: value }))
               }
               onSalesforceLookup={(data) => setSalesforceData(data)}
+              onEmailCaptured={(id) => setEmailCaptureId(id)}
             />
           )}
 

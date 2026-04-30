@@ -14,6 +14,7 @@ interface Step1EmailProps {
   onLastNameChange: (value: string) => void;
   onCompanyNameChange: (value: string) => void;
   onSalesforceLookup?: (data: SalesforceLookupData) => void;
+  onEmailCaptured?: (captureId: string) => void;
 }
 
 export function Step1Email({
@@ -26,13 +27,43 @@ export function Step1Email({
   onLastNameChange,
   onCompanyNameChange,
   onSalesforceLookup,
+  onEmailCaptured,
 }: Step1EmailProps) {
   const [sfLoading, setSfLoading] = useState(false);
   const [sfResult, setSfResult] = useState<SalesforceLookupData | null>(null);
+  const [capturedEmail, setCapturedEmail] = useState<string>("");
+
+  const captureEmail = async (email: string) => {
+    if (capturedEmail === email) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const { data } = await supabase
+      .from("email_captures")
+      .insert({
+        email,
+        utm_source: params.get("utm_source"),
+        utm_medium: params.get("utm_medium"),
+        utm_campaign: params.get("utm_campaign"),
+        utm_content: params.get("utm_content"),
+        referrer: document.referrer || null,
+        user_agent: navigator.userAgent,
+      })
+      .select("id")
+      .single();
+
+    setCapturedEmail(email);
+    if (data?.id && onEmailCaptured) {
+      onEmailCaptured(data.id);
+    }
+  };
 
   const handleEmailBlur = async () => {
     const trimmed = email.trim();
-    if (!trimmed || !trimmed.includes("@") || !onSalesforceLookup) return;
+    if (!trimmed || !trimmed.includes("@")) return;
+
+    captureEmail(trimmed).catch((err) => console.warn("Email capture failed:", err));
+
+    if (!onSalesforceLookup) return;
 
     setSfLoading(true);
     setSfResult(null);

@@ -110,6 +110,56 @@ export type Database = {
           },
         ]
       }
+      email_captures: {
+        Row: {
+          id: string
+          email: string
+          captured_at: string
+          utm_source: string | null
+          utm_medium: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          referrer: string | null
+          user_agent: string | null
+          completed_assessment: boolean
+          assessment_id: string | null
+        }
+        Insert: {
+          id?: string
+          email: string
+          captured_at?: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          completed_assessment?: boolean
+          assessment_id?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          captured_at?: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          completed_assessment?: boolean
+          assessment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_captures_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benchmarks: {
         Row: {
           consent_rate_avg: number | null
