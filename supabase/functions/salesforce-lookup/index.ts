@@ -32,6 +32,11 @@ interface LookupResult {
   } | null;
 }
 
+interface SalesforceQueryResponse {
+  totalSize: number;
+  records: Record<string, unknown>[];
+}
+
 /**
  * Authenticate to Salesforce via OAuth2 Username-Password flow.
  * If you use Client Credentials flow instead, swap grant_type and remove username/password.
@@ -65,7 +70,7 @@ async function querySalesforce(
   instanceUrl: string,
   accessToken: string,
   soql: string
-): Promise<any> {
+): Promise<SalesforceQueryResponse> {
   const url = `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(soql)}`;
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -94,8 +99,12 @@ serve(async (req) => {
       );
     }
 
-    if (!SF_CLIENT_ID || !SF_CLIENT_SECRET) {
-      throw new Error("Salesforce credentials not configured");
+    if (!SF_CLIENT_ID || !SF_CLIENT_SECRET || !SF_USERNAME || !SF_PASSWORD) {
+      console.warn("[salesforce-lookup] Salesforce credentials not configured; skipping lookup.");
+      return new Response(
+        JSON.stringify({ found: false, source: null, data: null }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // 1. Authenticate
