@@ -107,7 +107,7 @@ export function Step1Email({
           Get Your Personalized Growth Readiness Score
         </h2>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          See exactly where your data, activation, decisioning, and governance stack up — and the top growth plays to unlock your next stage.
+          See exactly where your data, activation, decisioning, and governance stack up, and the top growth plays to unlock your next stage.
         </p>
       </div>
 
