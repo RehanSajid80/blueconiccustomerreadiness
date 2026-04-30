@@ -4,10 +4,11 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Industry, Persona, AssessmentData, ChallengeType, GoalType } from "@/types/assessment";
-import { Step1Industry, SalesforceLookupData } from "./Step1Industry";
+import { SalesforceLookupData } from "./Step1Industry";
+import { Step1Email } from "./Step1Email";
 import { Step2Maturity, maturitySections } from "./Step2Maturity";
 import { Step3Challenges } from "./Step3Challenges";
-import { Step3Business } from "./Step3Business";
+import { Step4Profile } from "./Step4Profile";
 import { useNavigate } from "react-router-dom";
 import { getEligiblePlays } from "@/data/growthPlays";
 
@@ -90,10 +91,6 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     loadData();
   }, []);
 
-  const handleBusinessDataChange = (field: string, value: number | null) => {
-    setAssessmentData((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleChallengesChange = (challenges: ChallengeType[]) => {
     setAssessmentData((prev) => ({ ...prev, challenges }));
   };
@@ -115,7 +112,9 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
   const canProceed = () => {
     if (demoMode) return true;
     if (step === 1) {
-      return assessmentData.industry_id && assessmentData.persona_id && assessmentData.first_name?.trim() && assessmentData.last_name?.trim() && assessmentData.company_name?.trim() && assessmentData.email?.trim();
+      // Email-only entry — minimal friction
+      const email = assessmentData.email?.trim() || "";
+      return email.length > 0 && email.includes("@");
     }
     if (step === 2) {
       return allMaturityQuestionsAnswered();
@@ -123,6 +122,16 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     if (step === 3) {
       // Require at least 1 challenge and 1 goal
       return (assessmentData.challenges?.length || 0) >= 1 && (assessmentData.goals?.length || 0) >= 1;
+    }
+    if (step === 4) {
+      // Profile gate before results — required for Salesforce
+      return (
+        !!assessmentData.industry_id &&
+        !!assessmentData.persona_id &&
+        !!assessmentData.first_name?.trim() &&
+        !!assessmentData.last_name?.trim() &&
+        !!assessmentData.company_name?.trim()
+      );
     }
     return true;
   };
@@ -242,7 +251,7 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
     }
   };
 
-  const stepLabels = ["Company Info", "Maturity Assessment", "Challenges & Goals", "Business Metrics"];
+  const stepLabels = ["Email", "Maturity Assessment", "Challenges & Goals", "About You"];
   const totalSteps = 4;
 
   return (
@@ -289,36 +298,22 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
         {/* Content Card */}
         <Card className="max-w-3xl mx-auto p-6 md:p-8 shadow-xl border-0 bg-white">
           {step === 1 && (
-            <Step1Industry
-              industries={industries}
-              personas={personas}
-              selectedIndustry={assessmentData.industry_id}
-              selectedPersona={assessmentData.persona_id}
+            <Step1Email
+              email={assessmentData.email || ""}
               firstName={assessmentData.first_name || ""}
               lastName={assessmentData.last_name || ""}
               companyName={assessmentData.company_name || ""}
-              companyUrl={assessmentData.company_url || ""}
-              email={assessmentData.email || ""}
+              onEmailChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, email: value }))
+              }
               onFirstNameChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, first_name: value }))
               }
               onLastNameChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, last_name: value }))
               }
-              onIndustryChange={(value) =>
-                setAssessmentData((prev) => ({ ...prev, industry_id: value }))
-              }
-              onPersonaChange={(value) =>
-                setAssessmentData((prev) => ({ ...prev, persona_id: value }))
-              }
               onCompanyNameChange={(value) =>
                 setAssessmentData((prev) => ({ ...prev, company_name: value }))
-              }
-              onCompanyUrlChange={(value) =>
-                setAssessmentData((prev) => ({ ...prev, company_url: value }))
-              }
-              onEmailChange={(value) =>
-                setAssessmentData((prev) => ({ ...prev, email: value }))
               }
               onSalesforceLookup={(data) => setSalesforceData(data)}
             />
@@ -341,9 +336,29 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
           )}
 
           {step === 4 && (
-            <Step3Business
-              data={assessmentData}
-              onChange={handleBusinessDataChange}
+            <Step4Profile
+              industries={industries}
+              personas={personas}
+              selectedIndustry={assessmentData.industry_id}
+              selectedPersona={assessmentData.persona_id}
+              firstName={assessmentData.first_name || ""}
+              lastName={assessmentData.last_name || ""}
+              companyName={assessmentData.company_name || ""}
+              onIndustryChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, industry_id: value }))
+              }
+              onPersonaChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, persona_id: value }))
+              }
+              onFirstNameChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, first_name: value }))
+              }
+              onLastNameChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, last_name: value }))
+              }
+              onCompanyNameChange={(value) =>
+                setAssessmentData((prev) => ({ ...prev, company_name: value }))
+              }
             />
           )}
 
@@ -372,6 +387,8 @@ export function AssessmentWizard({ onComplete }: AssessmentWizardProps) {
                   </>
                 ) : step === totalSteps ? (
                   "See My Results"
+                ) : step === 1 ? (
+                  "Start Assessment"
                 ) : (
                   "Continue"
                 )}
