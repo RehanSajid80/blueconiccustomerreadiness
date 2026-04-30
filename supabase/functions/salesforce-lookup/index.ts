@@ -94,8 +94,12 @@ serve(async (req) => {
       );
     }
 
-    if (!SF_CLIENT_ID || !SF_CLIENT_SECRET) {
-      throw new Error("Salesforce credentials not configured");
+    if (!SF_CLIENT_ID || !SF_CLIENT_SECRET || !SF_USERNAME || !SF_PASSWORD) {
+      console.warn("[salesforce-lookup] Salesforce credentials not configured; skipping lookup.");
+      return new Response(
+        JSON.stringify({ found: false, source: null, data: null }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // 1. Authenticate
